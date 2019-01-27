@@ -1,20 +1,4 @@
 import { firebaseAction } from "vuexfire";
-import purchases from "../purchases.json"
-
-const STATUS_SORT_VALS = {
-  initial: 10,
-  readyForProduction: 20,
-  inProduction: 30,
-  producerApproved: 40,
-  authoring: 50,
-  submittedForBurn: 70,
-  burnComplete: 80,
-  packaging: 90,
-  packagingApproved: 100,
-  shipping: 110,
-  arrived: 120,
-  test: 999,
-};
 
 export default {
   namespaced: true,
