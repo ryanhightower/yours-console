@@ -1,6 +1,7 @@
 <template>
   <div class="purchases container is-fluid">
-    <h1>{{ msg }}</h1>
+    <h1 style="font-weight:bold; font-size:2em;">Purchases</h1>
+    <hr>
     <a class="button" @click="show.controls = !show.controls">{{ show.controls ? "Hide":"Show" }} Controls </a>
     <div class="controls" v-show="show.controls">
       <div class="search" style="padding: 0 30px;">
@@ -26,16 +27,16 @@
     </div>
 
     <div class="tabs" style="display:flex; justify-content: center; padding: 1px;">
-      <a class="button" @click.prevent="setSearchText('')">All</a>
-      <a class="button" @click.prevent="setSearchText('initial')">Uploading</a>
-      <a class="button" @click.prevent="setSearchText('production')">Production</a>
-      <a class="button" @click.prevent="setSearchText('author')">Authoring</a>
-      <a class="button" @click.prevent="setSearchText('authoring|submittedForburn')">Fulfillment</a>
-      <a class="button" @click.prevent="setSearchText('shipping')">Shipping</a>
-      <a class="button" @click.prevent="setSearchText('arrived|complete')">Complete</a>
-      <a class="button" @click.prevent="setSearchText('archive')">Archive</a>
-      <a class="button" @click.prevent="setSearchText(getStalledPurchasesSearchText())">Stalled</a>
-      <a class="button" @click.prevent="setSearchText('initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn')">All Current</a>
+      <a class="button" :class="{ 'is-primary': searchText == '' }" @click.prevent="setSearchText('')">All</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'initial' }" @click.prevent="setSearchText('initial')">Uploading</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'production' }" @click.prevent="setSearchText('production')">Production</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'authoring' }" @click.prevent="setSearchText('authoring')">Authoring</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'authoring|submittedForburn' }" @click.prevent="setSearchText('authoring|submittedForburn')">Fulfillment</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'shipping' }" @click.prevent="setSearchText('shipping')">Shipping</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'arrived|complete' }" @click.prevent="setSearchText('arrived|complete')">Complete</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'archive' }" @click.prevent="setSearchText('archive')">Archive</a>
+      <a class="button" :class="{ 'is-primary': false }" @click.prevent="setSearchText(getStalledPurchasesSearchText())">Stalled</a>
+      <a class="button" :class="{ 'is-primary': searchText == 'initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn' }" @click.prevent="setSearchText('initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn')">All Current</a>
     </div>
 
     <h4>
@@ -48,7 +49,7 @@
       :hoverable="true"
       :loading="loading"
       :mobile-cards="true"
-      default-sort="statusSort"
+      :default-sort="defaultSortBy"
       :default-sort-direction="defaultSortOrder"
       :paginated="isPaginated"
       :per-page="perPage"
@@ -92,10 +93,14 @@
         </b-table-column>
 
         <b-table-column field="user.email" label="Customer" sortable :visible="show.columns.customer">
-          <!-- <router-link :to="{ name: `user`, params: { userId: props.row.user.id } }"> -->
+            <router-link :to="{ name: `user`, params: { userId: props.row.user.id } }">
+              <b-icon icon="external-link-alt" style="float:left; margin-right:5px;"></b-icon>
+            </router-link>
+
             {{ props.row.user.name }} <br>
-            {{ props.row.user.email }}
-          <!-- </router-link> -->
+            <a @click="setSearchText(props.row.user.email)">
+              {{ props.row.user.email }}
+            </a>
         </b-table-column>
 
         <b-table-column field="dvd_cover_title" label="Cover Title" sortable :visible="show.columns.title">
@@ -108,7 +113,7 @@
                 {{ new Date(props.row.date_placed * 1000).toLocaleDateString() }}
         </b-table-column>
 
-        <b-table-column field="upload" label="Last Upload" centered :visible="show.columns.lastUpload">
+        <b-table-column field="lastUpload" label="Last Upload" centered :visible="show.columns.lastUpload">
             <span :class="{'is-danger tag': isStalled(props.row) }">
                 {{ props.row.lastUploadTimestamp ?
                   new Date(props.row.lastUploadTimestamp * 1000).toLocaleDateString()
@@ -175,7 +180,6 @@ export default {
   mixins: [purchaseHelperMixin],
   data() {
     return {
-      msg: 'Welcome to the Purchases Page',
       sortBy: "status",
       searchText: "",
       filterBy: {
@@ -203,8 +207,8 @@ export default {
           author: false
         }
       },
-      defaultSortBy: "statusSort",
-      defaultSortOrder: "asc",
+      defaultSortBy: "date_placed",
+      defaultSortOrder: "desc",
       isPaginated: true,
       perPage: 50,
     };
@@ -248,6 +252,7 @@ export default {
         if( this.filterBy.email && get(purchase, "user.email", "").match(search) ) return true;
         if( this.filterBy.producer && get(purchase, "producer.name", "").match(search) ) return true;
         if( this.filterBy.title && get(purchase, "dvd_cover_title", "").match(search) ) return true;
+        if( this.filterBy.lastUpload && get(purchase, "lastUpload", "none").match(search) ) return true;
         return false;
       })
     }
@@ -280,6 +285,7 @@ export default {
       this.setSearchText('[^arrived|complete|archive|test]')
     },
     setSearchText(text){
+      if(this.searchText === text) return this.searchText = "";
         this.searchText = text
     },
     setStatus({key, status}){
