@@ -6,8 +6,8 @@ export default {
     all: [],
     filesByPurchase: [],
     refs: {
-      purchases: "",
-      filesByPurchase: ""
+      purchases: null,
+      filesByPurchase: null
     },
     loading: {
       purchases: false,
@@ -55,7 +55,7 @@ export default {
     },
     // DANGER WILL ROBINSON!!
     UPDATE_PURCHASE(state, purchase) {
-      const thePurchaseRef = state.allRef.child(purchase[`.key`]);
+      const thePurchaseRef = state.refs.purchases.child(purchase[`.key`]);
       const updated = Object.assign({}, purchase);
       delete updated[".key"];
 

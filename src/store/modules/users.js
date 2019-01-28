@@ -4,7 +4,7 @@ export default {
   namespaced: true,
   state: {
     all: {}, // Use native firebase object instead of array
-    user: [],
+    // user: [],
     // // Might need?
     // movies: [],
     // addresses: [],
@@ -13,12 +13,13 @@ export default {
     // dislikedMovies: [],
     // magicMovies: [],
     // purchases: [],
-    stripeCustomers: [],
+    stripeCustomers: {},
     // uploadAssets: [],
     refs: {
-      users: "",
-      moviesByUser: "",
-      user: ""
+      users: null,
+      stripeCustomers: null
+      // moviesByUser: null,
+      // user: null
     },
     index: {
       users: [] // use this later for garbage collection.
@@ -26,7 +27,7 @@ export default {
     },
     loading: {
       users: false,
-      user: false,
+      // user: false,
       // moviesByUser: false
       // addresses: false,
       // streamables: false,
@@ -113,11 +114,11 @@ export default {
       });
     },
     setStripeCustomer({ commit }, { ref, key }) {
-      commit("TOGGLE_LOADING_STATE", { key: "stripeCustomer", value: true });
-      commit("SET_REF", { key: "user", ref });
+      commit("TOGGLE_LOADING_STATE", { key: "stripeCustomers", value: true });
+      commit("SET_REF", { key: "stripeCustomers", ref });
       ref.on("value", snap => {
         commit("ADD_STRIPE_CUSTOMER", { key, user: snap.val() });
-        commit("TOGGLE_LOADING_STATE", { key: "stripeCustomer", value: false });
+        commit("TOGGLE_LOADING_STATE", { key: "stripeCustomers", value: false });
       });
     },
     setMoviesByUser: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
