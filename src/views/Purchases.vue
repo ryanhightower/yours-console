@@ -47,7 +47,7 @@
       :striped="true"
       :narrowed="true"
       :hoverable="true"
-      :loading="loading"
+      :loading="loadingPurchases"
       :mobile-cards="true"
       :default-sort="defaultSortBy"
       :default-sort-direction="defaultSortOrder"
@@ -171,13 +171,14 @@
 
 <script>
 import { get, pick } from 'lodash';
-import { mapState, mapGetters } from 'vuex';
-import { db, auth } from '../firebase';
-import purchaseHelperMixin from '@/mixins/purchaseHelperMixin';
+import { mapState } from 'vuex';
+import { auth } from '../firebase';
+import purchaseMixin from '@/mixins/purchaseMixin';
 
 export default {
   components: {},
-  mixins: [purchaseHelperMixin],
+  // NOTE: If you don't know where something is, check the purchaseMixin
+  mixins: [purchaseMixin],
   data() {
     return {
       sortBy: "status",
@@ -215,31 +216,9 @@ export default {
   },
   computed: {
     ...mapState({
-      purchases: state => state.purchases.all,
-      files: state => state.purchases.files,
-      loading: state => state.purchases.loading.purchases,
-      loadingFiles: state => state.purchases.loading.files
+      files: state => state.purchases.filesByPurchase,
+      loadingFiles: state => state.purchases.loading.filesByPurchase,
     }),
-    ...mapGetters({
-      isAuthoring: "purchases/isAuthoring",
-    }),
-    sortedPurchases(){
-       const compare1 = (a, b) => {
-        if (a[this.sortBy] > b[this.sortBy]) {
-          return 1;
-        }
-        if (a[this.sortBy] < b[this.sortBy]) {
-          return -1;
-        }
-        return 0;
-      };
-       const compare2 = (a, b) => a.statusSort > b.statusSort ? 1 : a.statusSort < b.statusSort ? -1 : 0;
-      if( this.sortBy === "authoring") return this.isAuthoring;
-      return this.purchases.concat().sort(compare2);
-    },
-    showColumns(){
-      return Object.keys(this.show.columns);
-    },
     filteredPurchases(){
       if(!this.searchText || this.searchText === "") return this.normalizePurchases(this.purchases);
 
@@ -312,11 +291,7 @@ export default {
       const numSelected = Object.keys(this.get(files, 'selected',{})).length;
       return `${numUploaded} / ${numSelected}`
     }
-  },
-  created() {
-    this.$store.dispatch("purchases/setPurchasesRef", { ref: db.ref("purchases") });
-    this.$store.dispatch("purchases/setFilesByPurchaseRef", { ref: db.ref("filesByPurchase") });
-  },
+  }
 };
 </script>
 

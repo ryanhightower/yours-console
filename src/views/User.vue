@@ -11,27 +11,22 @@
 <script>
 import { get, pick } from 'lodash';
 import { mapState } from 'vuex';
-import { db } from '../firebase';
-import purchaseHelperMixin from '@/mixins/purchaseHelperMixin';
+import purchaseMixin from '@/mixins/purchaseMixin';
 
 export default {
   components: {},
-  mixins: [purchaseHelperMixin],
+  mixins: [purchaseMixin],
   data() {
     return {};
   },
   computed: {
     ...mapState({
       users: state => state.users.all,
-      usersRef: state => state.users.allRef,
-      purchases: state => state.purchases.all,
-      files: state => state.purchases.files,
       loadingUsers: state => state.users.loading.users,
-      loadingPurchases: state => state.purchases.loading.purchases,
-      loadingFiles: state => state.purchases.loading.files
+      refs: state => state.refs,
     }),
     user(){
-      return this.$store.state.users.all[this.userId]
+      return this.users[this.userId]
     },
     purchasesByUser(){
       return this.normalizePurchases(this.purchases).filter(purchase => purchase.user.id === this.userId)
@@ -41,15 +36,6 @@ export default {
   methods: {
     get,
     pick,
-    normalizePurchases(purchases){
-      const emptyUser = { id: '', name: '', email: '' };
-      return purchases.concat().map(purchase => {
-        purchase.producer = get(purchase, 'producer', emptyUser);
-        purchase.author = get(purchase, 'author', emptyUser);
-        purchase.user = get(purchase, 'user', emptyUser);
-        return purchase;
-      });
-    },
     setStatus(args){
       console.log(`setStatus ${args.status} to ${args.key}`);
       this.$store.commit("purchases/SET_PURCHASE_STATUS", args);
