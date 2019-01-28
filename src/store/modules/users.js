@@ -34,7 +34,7 @@ export default {
       // dislikedMovies: false,
       // magicMovies: false,
       // purchases: false,
-      stripeCustomers: false,
+      stripeCustomers: false
       // uploadAssets: false,
     },
     MAX_USERS_LENGTH: 10
@@ -55,29 +55,29 @@ export default {
       });
     },
     ADD_USER(state, { key, user }) {
-      console.log("ADD_USER", { key, user});
+      // console.log("ADD_USER", { key, user });
       // Vue.set(state.all, key, user);
       const users = Object.assign({}, state.all);
       users[key] = user;
-      if(! state.index.users.includes(key)) state.index.users.push(key);
+      if (!state.index.users.includes(key)) state.index.users.push(key);
       if (state.index.users.length > state.MAX_USERS_LENGTH) {
         // garbage collection
         const id = state.index.users.shift();
-        console.log("GARBAGE", {id})
+        // console.log("GARBAGE", { id });
         delete users[id];
       }
       state.all = users;
     },
     ADD_STRIPE_CUSTOMER(state, { key, user }) {
-      console.log("ADD_STRIPE_CUSTOMER", { key, user});
+      // console.log("ADD_STRIPE_CUSTOMER", { key, user });
       // Vue.set(state.all, key, user);
       const users = Object.assign({}, state.stripeCustomers);
       users[key] = user;
-      if(! state.index.users.includes(key)) state.index.users.push(key);
+      if (!state.index.users.includes(key)) state.index.users.push(key);
       if (state.index.users.length > state.MAX_USERS_LENGTH) {
         // garbage collection
         const id = state.index.users.shift();
-        console.log("GARBAGE", {id})
+        // console.log("GARBAGE", { id });
         delete users[id];
       }
       state.stripeCustomers = users;

@@ -45,7 +45,7 @@ export default new Vuex.Store({
       TRACKING_BY_PURCHASE: db.ref("trackingByPurchase"),
       UNGROUPED_FILES_BY_PURCHASE: db.ref("ungroupedFilesByPurchase"),
       UPLOAD_ASSETS_BY_USER: db.ref("uploadAssetsByUser"),
-      USERS: db.ref("users"),
+      USERS: db.ref("users")
     }
   },
   mutations: {

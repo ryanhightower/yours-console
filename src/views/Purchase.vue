@@ -6,18 +6,15 @@
 </template>
 
 <script>
-import { get, pick } from 'lodash';
-import { mapState, mapGetters } from 'vuex';
-import { db } from '../firebase';
-import purchasesMixin from '@/mixins/purchasesMixin';
+import { get, pick } from "lodash";
+import { mapState } from "vuex";
+import purchasesMixin from "@/mixins/purchasesMixin";
 
 export default {
   components: {},
   mixins: [purchasesMixin],
   data() {
-    return {
-
-    };
+    return {};
   },
   computed: {
     ...mapState({
@@ -26,25 +23,28 @@ export default {
       loading: state => state.purchases.loading.purchases,
       loadingFiles: state => state.purchases.loading.files
     }),
-    purchase(){
-      return this.purchases.filter(purchase => purchase[".key"] === this.$route.params.purchaseId)[0]
-    },
+    purchase() {
+      return this.purchases.filter(
+        purchase => purchase[".key"] === this.$route.params.purchaseId
+      )[0];
+    }
   },
   methods: {
     get,
     pick,
-    setStatus(args){
-      console.log(`setStatus ${args.status} to ${args.key}`);
+    setStatus(args) {
+      // console.log(`setStatus ${args.status} to ${args.key}`);
       this.$store.commit("purchases/SET_PURCHASE_STATUS", args);
     }
-  },
+  }
 };
 </script>
 
 <style lang="scss">
-a.button { margin: 0 5px; }
-.tabs{
+a.button {
+  margin: 0 5px;
+}
+.tabs {
   padding: 30px;
-
 }
 </style>

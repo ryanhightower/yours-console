@@ -7,11 +7,11 @@ export default {
     filesByPurchase: [],
     refs: {
       purchases: "",
-      filesByPurchase: "",
+      filesByPurchase: ""
     },
     loading: {
       purchases: false,
-      filesByPurchase: false,
+      filesByPurchase: false
     },
     STATUS_SORT_VALS: {
       initial: 10,
@@ -27,7 +27,7 @@ export default {
       arrived: 120,
       complete: 130,
       archive: 990,
-      test: 999,
+      test: 999
     }
   },
   getters: {
@@ -44,7 +44,7 @@ export default {
     TOGGLE_LOADING_STATE(state, { key, value }) {
       state.loading[key] = value;
     },
-    SET_PURCHASE_STATUS(state, { key, status }){
+    SET_PURCHASE_STATUS(state, { key, status }) {
       const thePurchaseRef = state.allRef.child(key);
       thePurchaseRef.update({
         status: status,
@@ -82,7 +82,10 @@ export default {
         bindFirebaseRef("filesByPurchase", ref);
         commit("SET_REF", { key: "filesByPurchase", ref });
         ref.on("value", () => {
-          commit("TOGGLE_LOADING_STATE", { key: "filesByPurchase", value: false });
+          commit("TOGGLE_LOADING_STATE", {
+            key: "filesByPurchase",
+            value: false
+          });
         });
       }
     )

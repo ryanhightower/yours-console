@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import firebaseui from 'firebaseui';
-import firebase from '../firebase';
+import firebaseui from "firebaseui";
+import firebase from "../firebase";
 
 let ui;
 export default {
-  name: 'auth',
+  name: "auth",
   mounted() {
     if (ui) {
       ui.reset();
@@ -16,13 +16,11 @@ export default {
       ui = new firebaseui.auth.AuthUI(firebase.auth());
     }
     const uiConfig = {
-      signInFlow: 'popup',
-      signInSuccessUrl: '/',
-      signInOptions: [
-        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      ],
+      signInFlow: "popup",
+      signInSuccessUrl: "/",
+      signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID]
     };
-    ui.start('#firebaseui-auth-container', uiConfig);
-  },
+    ui.start("#firebaseui-auth-container", uiConfig);
+  }
 };
 </script>
