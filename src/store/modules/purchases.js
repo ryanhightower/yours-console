@@ -45,7 +45,7 @@ export default {
       state.loading[key] = value;
     },
     SET_PURCHASE_STATUS(state, { key, status }) {
-      const thePurchaseRef = state.allRef.child(key);
+      const thePurchaseRef = state.refs.purchases.child(key);
       thePurchaseRef.update({
         status: status,
         statusSort: state.STATUS_SORT_VALS[status]
