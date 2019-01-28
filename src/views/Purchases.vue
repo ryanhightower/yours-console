@@ -243,7 +243,7 @@
             {{ props.row.user.name }}
           </router-link>
 
-          <a :href="`https://console.yours.co/purchase/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt"></b-icon></a>
+          <a :href="`https://console.yours.co/user/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt"></b-icon></a>
           <br />
           <a @click="setSearchText(props.row.user.email)">
             {{ props.row.user.email }}
