@@ -40,7 +40,7 @@
     <div
       class="tabs"
       style="display:flex; justify-content: center; padding: 1px;"
-    >
+      >
       <a
         class="button"
         :class="{ 'is-primary': searchText == '' }"
@@ -61,14 +61,14 @@
       >
       <a
         class="button"
-        :class="{ 'is-primary': searchText == 'authoring' }"
-        @click.prevent="setSearchText('authoring')"
+        :class="{ 'is-primary': searchText == 'authoring|producerApproved' }"
+        @click.prevent="setSearchText('authoring|producerApproved')"
         >Authoring</a
       >
       <a
         class="button"
-        :class="{ 'is-primary': searchText == 'authoring|submittedForburn' }"
-        @click.prevent="setSearchText('authoring|submittedForburn')"
+        :class="{ 'is-primary': searchText == 'authoring|producerApproved|submittedForburn' }"
+        @click.prevent="setSearchText('authoring|producerApproved|submittedForburn')"
         >Fulfillment</a
       >
       <a
@@ -125,7 +125,7 @@
       :per-page="perPage"
       detailed
       :show-detail-icon="true"
-    >
+      >
       <template slot-scope="props">
         <b-table-column
           field="statusSort"
@@ -149,8 +149,9 @@
               name: `purchase`,
               params: { purchaseId: props.row[`.key`] }
             }"
-            >{{ props.row[".key"] }}</router-link
-          >
+            >{{ props.row[".key"] }}
+          </router-link>
+          <a :href="`https://console.yours.co/purchase/${props.row[`.key`]}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt"></b-icon></a>
         </b-table-column>
 
         <b-table-column
@@ -238,14 +239,12 @@
         >
           <router-link
             :to="{ name: `user`, params: { userId: props.row.user.id } }"
-          >
-            <b-icon
-              icon="external-link-alt"
-              style="float:left; margin-right:5px;"
-            ></b-icon>
+            >
+            {{ props.row.user.name }}
           </router-link>
 
-          {{ props.row.user.name }} <br />
+          <a :href="`https://console.yours.co/purchase/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt"></b-icon></a>
+          <br />
           <a @click="setSearchText(props.row.user.email)">
             {{ props.row.user.email }}
           </a>
