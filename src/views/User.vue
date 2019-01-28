@@ -42,11 +42,20 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch("users/setUsersRef", { ref: db.ref("users") });
-    // this.$store.dispatch("users/setMoviesByUserRef", { ref: db.ref("moviesByUser") });
-    this.$store.dispatch("purchases/setPurchasesRef", { ref: db.ref("purchases") });
-    this.$store.dispatch("purchases/setFilesByPurchaseRef", { ref: db.ref("filesByPurchase") });
+    // this.$store.dispatch("users/setUsers", { ref: this.refs.USERS });
+    // this.$store.dispatch("users/setMoviesByUser", { ref: this.refs.MOVIES_BY_USER });
+    // this.$store.dispatch("purchases/setFilesByPurchase", { ref: this.refs.FILES_BY_PURCHASE });
   },
+  watch:{
+    '$route': {
+      immediate: true,
+      handler(to, from) {
+        // Fetch user
+        if(to.name === "user" && !this.users[to.params.userId])
+          this.$store.dispatch("users/setUser", { ref: this.refs.USERS.child(to.params.userId), key: to.params.userId });
+      }
+    }
+  }
 };
 </script>
 
