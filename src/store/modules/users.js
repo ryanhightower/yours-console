@@ -5,36 +5,39 @@ export default {
   state: {
     all: {}, // Use native firebase object instead of array
     user: [],
-    movies: [],
     // // Might need?
+    // movies: [],
     // addresses: [],
     // streamables: [],
     // failedAssets: [],
     // dislikedMovies: [],
     // magicMovies: [],
     // purchases: [],
-    // stripeCustomers: [],
+    stripeCustomers: [],
     // uploadAssets: [],
     refs: {
       users: "",
-      moviesByUser: ""
+      moviesByUser: "",
+      user: ""
     },
     index: {
       users: [] // use this later for garbage collection.
+      // stripeCustomers: [] // use this later for garbage collection.
     },
     loading: {
       users: false,
       user: false,
-      moviesByUser: false
+      // moviesByUser: false
       // addresses: false,
       // streamables: false,
       // failedAssets: false,
       // dislikedMovies: false,
       // magicMovies: false,
       // purchases: false,
-      // stripeCustomers: false,
+      stripeCustomers: false,
       // uploadAssets: false,
-    }
+    },
+    MAX_USERS_LENGTH: 10
   },
   getters: {},
   mutations: {
@@ -56,14 +59,28 @@ export default {
       // Vue.set(state.all, key, user);
       const users = Object.assign({}, state.all);
       users[key] = user;
-      state.index.users.push(key);
-      if (state.index.users.length > 3) {
+      if(! state.index.users.includes(key)) state.index.users.push(key);
+      if (state.index.users.length > state.MAX_USERS_LENGTH) {
         // garbage collection
         const id = state.index.users.shift();
         console.log("GARBAGE", {id})
         delete users[id];
       }
       state.all = users;
+    },
+    ADD_STRIPE_CUSTOMER(state, { key, user }) {
+      console.log("ADD_STRIPE_CUSTOMER", { key, user});
+      // Vue.set(state.all, key, user);
+      const users = Object.assign({}, state.stripeCustomers);
+      users[key] = user;
+      if(! state.index.users.includes(key)) state.index.users.push(key);
+      if (state.index.users.length > state.MAX_USERS_LENGTH) {
+        // garbage collection
+        const id = state.index.users.shift();
+        console.log("GARBAGE", {id})
+        delete users[id];
+      }
+      state.stripeCustomers = users;
     },
     SET_USERS_ALL(state, obj) {
       state.all = obj;
@@ -84,12 +101,23 @@ export default {
         commit("TOGGLE_LOADING_STATE", { key: "users", value: false });
       });
     }),
+    setUsersRef({ commit }, { ref }) {
+      commit("SET_REF", { key: "users", ref });
+    },
     setUser({ commit }, { ref, key }) {
       commit("TOGGLE_LOADING_STATE", { key: "users", value: true });
       commit("SET_REF", { key: "user", ref });
       ref.on("value", snap => {
         commit("ADD_USER", { key, user: snap.val() });
         commit("TOGGLE_LOADING_STATE", { key: "users", value: false });
+      });
+    },
+    setStripeCustomer({ commit }, { ref, key }) {
+      commit("TOGGLE_LOADING_STATE", { key: "stripeCustomer", value: true });
+      commit("SET_REF", { key: "user", ref });
+      ref.on("value", snap => {
+        commit("ADD_STRIPE_CUSTOMER", { key, user: snap.val() });
+        commit("TOGGLE_LOADING_STATE", { key: "stripeCustomer", value: false });
       });
     },
     setMoviesByUser: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {

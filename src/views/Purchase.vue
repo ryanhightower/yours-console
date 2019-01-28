@@ -33,15 +33,10 @@ export default {
   methods: {
     get,
     pick,
-
     setStatus(args){
       console.log(`setStatus ${args.status} to ${args.key}`);
       this.$store.commit("purchases/SET_PURCHASE_STATUS", args);
     }
-  },
-  created() {
-    this.$store.dispatch("purchases/setPurchasesRef", { ref: db.ref("purchases") });
-    this.$store.dispatch("purchases/setFilesByPurchaseRef", { ref: db.ref("filesByPurchase") });
   },
 };
 </script>
