@@ -10,7 +10,9 @@
         <router-link class="navbar-item" to="/login">Login</router-link>
       </div>
     </div>
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
   </div>
 </template>
 
