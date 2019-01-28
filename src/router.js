@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "./views/Home.vue";
+// import Home from "./views/Home.vue";
 
 Vue.use(Router);
 
@@ -10,8 +10,7 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "home",
-      component: Home
+      redirect: { name: "purchases" }
     },
     {
       path: "/login",
@@ -33,6 +32,19 @@ export default new Router({
       name: "purchase",
       component: () =>
         import(/* webpackChunkName: "purchase" */ "./views/Purchase.vue")
+    },
+    {
+      path: "/users/:userId",
+      name: "user",
+      component: () =>
+        import(/* webpackChunkName: "purchase" */ "./views/User.vue")
     }
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { x: 0, y: 0 }
+    }
+  }
 });
