@@ -177,13 +177,13 @@
           :visible="show.columns.icons"
         >
           <div>
-            <b-icon
+            <!-- <b-icon
               icon="dollar-sign"
               type="is-success"
               size="is-small"
               v-show="props.row.chargeId != undefined"
               title="Billed successfully"
-            ></b-icon>
+            ></b-icon> -->
             <b-icon
               icon="exclamation-triangle"
               type="is-warning"
@@ -196,6 +196,13 @@
               type="is-success"
               size="is-small"
               v-show="props.row.usedSubscription"
+              title="Used subscription"
+            ></b-icon>
+            <b-icon
+              icon="infinity"
+              type="is-success"
+              size="is-small"
+              v-show="props.row.discQuantity === 0"
               title="Used subscription"
             ></b-icon>
             <b-icon
@@ -217,6 +224,12 @@
               type="is-danger"
               v-show="!props.row.billingComplete && !props.row.billingError"
               title="Was not billed"
+            ></b-icon>
+            <b-icon
+              icon="compact-disc"
+              type="is-success"
+              v-show="props.row.discQuantity"
+              :title="`Qty: ${props.row.discQuantity}`"
             ></b-icon>
           </div>
         </b-table-column>
