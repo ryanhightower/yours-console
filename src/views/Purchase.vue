@@ -9,11 +9,11 @@
 import { get, pick } from 'lodash';
 import { mapState, mapGetters } from 'vuex';
 import { db } from '../firebase';
-import purchaseMixin from '@/mixins/purchaseMixin';
+import purchasesMixin from '@/mixins/purchasesMixin';
 
 export default {
   components: {},
-  mixins: [purchaseMixin],
+  mixins: [purchasesMixin],
   data() {
     return {
 

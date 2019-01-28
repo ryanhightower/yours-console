@@ -173,12 +173,12 @@
 import { get, pick } from 'lodash';
 import { mapState } from 'vuex';
 import { auth } from '../firebase';
-import purchaseMixin from '@/mixins/purchaseMixin';
+import purchasesMixin from '@/mixins/purchasesMixin';
 
 export default {
   components: {},
-  // NOTE: If you don't know where something is, check the purchaseMixin
-  mixins: [purchaseMixin],
+  // NOTE: If you don't know where something is, check the purchasesMixin
+  mixins: [purchasesMixin],
   data() {
     return {
       sortBy: "status",

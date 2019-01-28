@@ -11,11 +11,11 @@
 <script>
 import { get, pick } from 'lodash';
 import { mapState } from 'vuex';
-import purchaseMixin from '@/mixins/purchaseMixin';
+import purchasesMixin from '@/mixins/purchasesMixin';
 
 export default {
   components: {},
-  mixins: [purchaseMixin],
+  mixins: [purchasesMixin],
   data() {
     return {};
   },
