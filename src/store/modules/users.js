@@ -4,29 +4,28 @@ export default {
   namespaced: true,
   state: {
     all: {}, // Use native firebase object instead of array
-    allRef: "",
+    user: [],
     movies: [],
-    moviesRef: "",
     // // Might need?
     // addresses: [],
-    // addressesRef: "",
     // streamables: [],
-    // streamablesRef: "",
     // failedAssets: [],
-    // failedAssetsRef: "",
     // dislikedMovies: [],
-    // dislikedMoviesRef: "",
     // magicMovies: [],
-    // magicMoviesRef: "",
     // purchases: [],
-    // purchasesRef: "",
     // stripeCustomers: [],
-    // stripeCustomersRef: "",
     // uploadAssets: [],
-    // uploadAssetsRef: "",
+    refs: {
+      users: "",
+      moviesByUser: ""
+    },
+    index: {
+      users: [] // use this later for garbage collection.
+    },
     loading: {
       users: false,
-      movies: false,
+      user: false,
+      moviesByUser: false
       // addresses: false,
       // streamables: false,
       // failedAssets: false,
@@ -43,8 +42,8 @@ export default {
       state.loading[key] = value;
     },
     // DANGER WILL ROBINSON!!
-    UPDATE_USER(state, user) {
-      const theUserRef = state.allRef.child(user[`.key`]);
+    UPDATE_USER(state, { key, user }) {
+      const theUserRef = state.refs.users.child(key);
       const updated = Object.assign({}, user);
       delete updated[".key"];
 
@@ -52,46 +51,54 @@ export default {
         ...updated
       });
     },
+    ADD_USER(state, { key, user }) {
+      console.log("ADD_USER", { key, user});
+      // Vue.set(state.all, key, user);
+      const users = Object.assign({}, state.all);
+      users[key] = user;
+      state.index.users.push(key);
+      if (state.index.users.length > 3) {
+        // garbage collection
+        const id = state.index.users.shift();
+        console.log("GARBAGE", {id})
+        delete users[id];
+      }
+      state.all = users;
+    },
     SET_USERS_ALL(state, obj) {
       state.all = obj;
     },
-    SET_USERS_REF(state, ref) {
-      state.allRef = ref;
-    },
-    SET_MOVIES_REF(state, ref) {
-      state.filesRef = ref;
+    SET_REF(state, { key, ref }) {
+      state.refs[key] = ref;
     }
   },
   actions: {
-    setUsersRef: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
+    setUsers: firebaseAction(({ commit }, { ref }) => {
       commit("TOGGLE_LOADING_STATE", { key: "users", value: true });
+      commit("SET_REF", { key: "users", ref });
       // Don't use vuexfire binding. We want to use the native obj
       // instead of an array. This gives us much faster lookups.
       // bindFirebaseRef("all", ref);
-      commit("SET_USERS_REF", ref);
       ref.on("value", snapshot => {
         commit("SET_USERS_ALL", snapshot.val());
         commit("TOGGLE_LOADING_STATE", { key: "users", value: false });
       });
     }),
-    setUserRef: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
-      commit("TOGGLE_LOADING_STATE", { key: "user", value: true });
-      bindFirebaseRef("user", ref);
-      commit("SET_USER_REF", ref);
-      ref.on("value", snapshot => {
-        console.log( {value: snapshot.val()})
-        commit("TOGGLE_LOADING_STATE", { key: "user", value: false });
+    setUser({ commit }, { ref, key }) {
+      commit("TOGGLE_LOADING_STATE", { key: "users", value: true });
+      commit("SET_REF", { key: "user", ref });
+      ref.on("value", snap => {
+        commit("ADD_USER", { key, user: snap.val() });
+        commit("TOGGLE_LOADING_STATE", { key: "users", value: false });
       });
-    }),
-    setMoviesByUserRef: firebaseAction(
-      ({ bindFirebaseRef, commit }, { ref }) => {
-        commit("TOGGLE_LOADING_STATE", { key: "movies", value: true });
-        bindFirebaseRef("files", ref);
-        commit("SET_MOVIES_REF", ref);
-        ref.on("value", () => {
-          commit("TOGGLE_LOADING_STATE", { key: "movies", value: false });
-        });
-      }
-    )
+    },
+    setMoviesByUser: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
+      commit("TOGGLE_LOADING_STATE", { key: "movies", value: true });
+      bindFirebaseRef("files", ref);
+      commit("SET_REF", { key: "moviesByUser", ref });
+      ref.on("value", () => {
+        commit("TOGGLE_LOADING_STATE", { key: "movies", value: false });
+      });
+    })
   }
 };

@@ -4,12 +4,14 @@ export default {
   namespaced: true,
   state: {
     all: [],
-    allRef: {},
-    files: [],
-    filesRef: {},
+    filesByPurchase: [],
+    refs: {
+      purchases: "",
+      filesByPurchase: "",
+    },
     loading: {
       purchases: false,
-      files: false,
+      filesByPurchase: false,
     },
     STATUS_SORT_VALS: {
       initial: 10,
@@ -61,29 +63,26 @@ export default {
         ...updated
       });
     },
-    SET_PURCHASES_REF(state, ref) {
-      state.allRef = ref;
-    },
-    SET_FILES_REF(state, ref) {
-      state.filesRef = ref;
+    SET_REF(state, { key, ref }) {
+      state.refs[key] = ref;
     }
   },
   actions: {
-    setPurchasesRef: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
+    setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
       commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
       bindFirebaseRef("all", ref);
-      commit("SET_PURCHASES_REF", ref);
+      commit("SET_REF", { key: "purchases", ref });
       ref.on("value", () => {
         commit("TOGGLE_LOADING_STATE", { key: "purchases", value: false });
       });
     }),
-    setFilesByPurchaseRef: firebaseAction(
+    setFilesByPurchase: firebaseAction(
       ({ bindFirebaseRef, commit }, { ref }) => {
-        commit("TOGGLE_LOADING_STATE", { key: "files", value: true });
-        bindFirebaseRef("files", ref);
-        commit("SET_FILES_REF", ref);
+        commit("TOGGLE_LOADING_STATE", { key: "filesByPurchase", value: true });
+        bindFirebaseRef("filesByPurchase", ref);
+        commit("SET_REF", { key: "filesByPurchase", ref });
         ref.on("value", () => {
-          commit("TOGGLE_LOADING_STATE", { key: "files", value: false });
+          commit("TOGGLE_LOADING_STATE", { key: "filesByPurchase", value: false });
         });
       }
     )
