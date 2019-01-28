@@ -168,10 +168,11 @@
 import { get, pick } from 'lodash';
 import { mapState, mapGetters } from 'vuex';
 import { db, auth } from '../firebase';
-
+import purchaseHelperMixin from '@/mixins/purchaseHelperMixin';
 
 export default {
   components: {},
+  mixins: [purchaseHelperMixin],
   data() {
     return {
       msg: 'Welcome to the Purchases Page',
@@ -269,16 +270,6 @@ export default {
         .filter( purchase => this.isStalled(purchase) )
         .map( purchase => purchase[`.key`])
         .join("|")
-    },
-
-    normalizePurchases(purchases){
-      return purchases.concat().map(purchase => {
-        purchase.producer = get(purchase, 'producer', { name: '' });
-        purchase.author = get(purchase, 'author', { name: '' });
-        purchase.user = get(purchase, 'user', { name: '', email: '', id: '' });
-        // purchase.stalled = get(purchase, 'stalled', this.isStalled(purchase));
-        return purchase;
-      });
     },
 
     searchAllCurrent(){

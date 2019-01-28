@@ -9,10 +9,11 @@
 import { get, pick } from 'lodash';
 import { mapState, mapGetters } from 'vuex';
 import { db } from '../firebase';
-
+import purchaseHelperMixin from '@/mixins/purchaseHelperMixin';
 
 export default {
   components: {},
+  mixins: [purchaseHelperMixin],
   data() {
     return {
 
@@ -25,9 +26,6 @@ export default {
       loading: state => state.purchases.loading.purchases,
       loadingFiles: state => state.purchases.loading.files
     }),
-    // ...mapGetters({
-    //   isAuthoring: "purchases/isAuthoring",
-    // }),
     purchase(){
       return this.purchases.filter(purchase => purchase[".key"] === this.$route.params.purchaseId)[0]
     },
@@ -35,18 +33,7 @@ export default {
   methods: {
     get,
     pick,
-    normalizePurchases(purchases){
-      return purchases.concat().map(purchase => {
-        purchase.producer = get(purchase, 'producer', { name: '' });
-        purchase.author = get(purchase, 'author', { name: '' });
-        purchase.user = get(purchase, 'user', { name: '', email: '' });
-        return purchase;
-      });
-    },
-    setSearchText(text){
-      // if(text && text !== "")
-        this.searchText = text
-    },
+
     setStatus(args){
       console.log(`setStatus ${args.status} to ${args.key}`);
       this.$store.commit("purchases/SET_PURCHASE_STATUS", args);
