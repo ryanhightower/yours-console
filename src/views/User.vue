@@ -1,6 +1,6 @@
 <template>
   <div class="purchase container is-fluid">
-    <h1 style="font-weight:bold; font-size:2em;">User: {{ this.user.name }}</h1>
+    <h1 style="font-weight:bold; font-size:2em;">User: {{ get(this.user, "name", "") }}</h1>
     <hr>
     <pre>{{ user }}</pre>
     <pre>{{ purchasesByUser }}</pre>
