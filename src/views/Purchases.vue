@@ -172,7 +172,7 @@
         </b-table-column>
 
         <b-table-column
-          field="chargeId"
+          field="billedStatus"
           label="Icons"
           :visible="show.columns.icons"
         >
@@ -191,6 +191,7 @@
               v-show="props.row.billingError"
               title="Error when billing"
             ></b-icon>
+            <!-- NOTE: I don't know if we set "usedSubscription" any more -->
             <b-icon
               icon="infinity"
               type="is-success"
@@ -203,7 +204,7 @@
               type="is-success"
               size="is-small"
               v-show="props.row.discQuantity === 0"
-              title="Used subscription"
+              title="Streaming only"
             ></b-icon>
             <b-icon
               icon="star"
@@ -353,15 +354,10 @@
           >Archive</a
         >
 
-        <!-- <pre v-show="props.row.labelId">Label ID: {{ props.row.labelId }}</pre> -->
         <pre>tracking: <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{ props.row.trackingNumber }}</a>
-{{ pick(props.row,['discQuantity', 'shippingStatus', 'billingComplete', 'chargeId']) }}</pre>
+{{ pick(props.row,['shippingStatus', 'billingComplete', 'chargeId']) }}</pre>
 
         <div class="notes">
-          <p>isStalled: {{ isStalled(props.row) }}</p>
-          <!-- <b-field label="Date">
-            <b-input type="number" v-model="props.row.date_placed"></b-input>
-          </b-field> -->
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
           </b-field>
