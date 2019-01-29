@@ -58,6 +58,7 @@ export default {
       const thePurchaseRef = state.refs.purchases.child(purchase[`.key`]);
       const updated = Object.assign({}, purchase);
       delete updated[".key"];
+      delete updated.key; // THIS IS ADDED IN normalizePurchases FOR SORTING.
 
       thePurchaseRef.update({
         ...updated

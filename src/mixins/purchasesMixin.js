@@ -13,6 +13,7 @@ export default {
     normalizePurchases(purchases) {
       const emptyUser = { id: "", name: "", email: "" };
       return purchases.concat().map(purchase => {
+        purchase.key = purchase[".key"]; // NOTE: REMEMBER TO REMOVE THIS PROP BEFORE SENDING BACK TO FIREBASE!
         purchase.producer = get(purchase, "producer", emptyUser);
         purchase.author = get(purchase, "author", emptyUser);
         purchase.user = get(purchase, "user", emptyUser);

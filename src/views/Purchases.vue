@@ -139,7 +139,7 @@
         </b-table-column>
 
         <b-table-column
-          field=".key"
+          field="key"
           label="ID"
           sortable
           :visible="show.columns.id"
