@@ -237,12 +237,14 @@
               v-show="!props.row.billingComplete && !props.row.billingError"
               title="Was not billed"
             ></b-icon>
+            <b-tooltip :label="`Qty: ${props.row.discQuantity}`">
             <b-icon
               icon="compact-disc"
-              type="is-success"
+                :type="props.row.discQuantity > 1 ? 'is-warning' : 'is-success'"
               v-show="props.row.discQuantity"
               :title="`Qty: ${props.row.discQuantity}`"
             ></b-icon>
+            </b-tooltip>
           </div>
         </b-table-column>
 
