@@ -596,6 +596,9 @@ export default {
 </script>
 
 <style lang="scss">
+.table th {
+    vertical-align: bottom;
+}
 a.button {
   margin: 5px;
 }
