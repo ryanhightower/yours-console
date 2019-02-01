@@ -395,8 +395,14 @@ status: {{ pick(props.row,['shippingStatus']) }}</pre>
           ></textarea
           ><br />
           <a @click="savePurchase(props.row)" class="button is-primary"
-            >Save Details</a
-          >
+              >Save Details</a>
+          </b-field>
+
+          <b-collapse :open="false">
+            <button class="button is-primary" slot="trigger">Debug</button>
+            <pre>{{ props.row }}</pre>
+          </b-collapse>
+
         </div>
       </template>
 
