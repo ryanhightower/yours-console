@@ -327,8 +327,8 @@
           sortable
           :visible="show.columns.producer"
         >
-          <a class="button" @click.prevent="assignProducer(props.row)"
-            ><b-icon icon="user-plus" pack="fas"></b-icon
+          <a class="button" @click.prevent="assign({ role: `producer`, purchase: props.row })"
+            ><b-icon icon="user-plus"></b-icon
           ></a>
           {{ get(props.row, "producer.name", "") }}
         </b-table-column>
@@ -339,7 +339,9 @@
           sortable
           :visible="show.columns.author"
         >
-          <b-icon icon="person_add"></b-icon>
+          <a class="button" @click.prevent="assign({ role: `author`, purchase: props.row })"
+            ><b-icon icon="user-plus"></b-icon
+          ></a>
           {{ get(props.row, "author.name", "") }}
         </b-table-column>
       </template>
@@ -496,9 +498,10 @@ export default {
   methods: {
     get, // lodash method
     pick, // lodash method
-    assignProducer(purchase) {
+    assign({ role, purchase }) {
       const user = auth.currentUser;
-      purchase.producer = {
+      if(!['producer', 'author'].includes(role)) return;
+      purchase[role] = {
         id: user.uid,
         name: user.displayName
       };
