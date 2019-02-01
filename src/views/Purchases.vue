@@ -344,6 +344,16 @@
           ></a>
           {{ get(props.row, "author.name", "") }}
         </b-table-column>
+
+        <b-table-column
+          label="Print"
+          width="40"
+          :visible="show.columns.author"
+        >
+          <a class="button" :href="props.row.dvdCoverUrl" :download="`cover-${props.row.key}.png`" target="_blank" v-show="props.row.dvdCoverUrl"
+            ><b-icon icon="print"></b-icon
+          ></a>
+        </b-table-column>
       </template>
 
       <template slot="detail" slot-scope="props">
