@@ -379,8 +379,9 @@
           >Archive</a
         >
 
-        <pre>tracking: <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{ props.row.trackingNumber }}</a>
-{{ pick(props.row,['shippingStatus', 'billingComplete', 'chargeId']) }}</pre>
+        <pre v-show="props.row.trackingNumber">Shipping:
+tracking: <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{ props.row.trackingNumber }}</a>
+status: {{ pick(props.row,['shippingStatus']) }}</pre>
 
         <div class="notes">
           <b-field label="Disc Quantity">
