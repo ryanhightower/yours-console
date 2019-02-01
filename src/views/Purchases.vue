@@ -126,6 +126,7 @@
       detailed
       :show-detail-icon="true"
       >
+
       <template slot-scope="props">
         <b-table-column
           field="statusSort"
@@ -136,6 +137,14 @@
           :visible="show.columns.statusSort"
         >
           {{ props.row.statusSort }}
+        </b-table-column>
+
+        <b-table-column
+          field="coverThumbnailUrl"
+          label="Thumb"
+          :visible="show.columns.thumbnail"
+        >
+          <img :src="props.row.coverThumbnailUrl" width="45" height="45">
         </b-table-column>
 
         <b-table-column
@@ -412,6 +421,7 @@ export default {
       show: {
         controls: false,
         columns: {
+          thumbnail: true,
           id: true,
           statusSort: false,
           status: true,
