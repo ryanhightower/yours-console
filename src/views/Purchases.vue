@@ -39,7 +39,7 @@
 
     <div
       class="tabs"
-      style="display:flex; justify-content: center; padding: 1px;"
+      style="display:flex; justify-content: center; flex-wrap: wrap; padding: 1px;"
       >
       <a
         class="button"
@@ -543,7 +543,7 @@ export default {
 
 <style lang="scss">
 a.button {
-  margin: 0 5px;
+  margin: 5px;
 }
 .tabs {
   padding: 30px;
