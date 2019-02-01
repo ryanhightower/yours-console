@@ -166,6 +166,21 @@
         </b-table-column>
 
         <b-table-column
+          field="needsAttention"
+          label="!"
+          :meta="{ icon:'exclamation-triangle', type:'is-danger' }"
+          :visible="show.columns.todo"
+        >
+         <b-icon
+              icon="exclamation-triangle"
+              type="is-danger"
+              size="is-small"
+              v-show="props.row.needsAttention"
+              :title="`NOTES: ${props.row.notes}`"
+            ></b-icon>
+        </b-table-column>
+
+        <b-table-column
           field="status"
           label="Status"
           :visible="show.columns.status"
@@ -394,6 +409,10 @@ status: {{ pick(props.row,['shippingStatus']) }}</pre>
             v-model="props.row.notes"
           ></textarea
           ><br />
+
+          <b-field>
+            <b-checkbox v-model="props.row.needsAttention"
+              type="is-danger">Needs Attention! </b-checkbox>
           <a @click="savePurchase(props.row)" class="button is-primary"
               >Save Details</a>
           </b-field>
@@ -446,6 +465,7 @@ export default {
         columns: {
           thumbnail: true,
           id: true,
+          todo: true,
           statusSort: false,
           status: true,
           icons: true,
