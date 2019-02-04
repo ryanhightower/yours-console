@@ -37,7 +37,13 @@ export default new Router({
       path: "/users/:userId",
       name: "user",
       component: () =>
-        import(/* webpackChunkName: "purchase" */ "./views/User.vue")
+        import(/* webpackChunkName: "user" */ "./views/User.vue")
+    },
+    {
+      path: "/scanner",
+      name: "scanner",
+      component: () =>
+        import(/* webpackChunkName: "scanner" */ "./views/Scanner.vue")
     }
   ],
   scrollBehavior(to, from, savedPosition) {
