@@ -489,7 +489,7 @@ export default {
       defaultSortBy: "date_placed",
       defaultSortOrder: "desc",
       isPaginated: true,
-      perPage: 50
+      perPage: 25
     };
   },
   computed: {
