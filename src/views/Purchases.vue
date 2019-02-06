@@ -419,14 +419,14 @@
           ><br />
 
           <b-field>
-            <b-checkbox v-model="props.row.needsAttention"
-              type="is-danger">Needs Attention! </b-checkbox>
           <a @click="savePurchase(props.row)" class="button is-primary"
               >Save Details</a>
+          <b-checkbox v-model="props.row.needsAttention"
+              type="is-danger">Needs Attention! </b-checkbox>
           </b-field>
 
           <b-collapse :open="false">
-            <button class="button is-primary" slot="trigger">Debug</button>
+            <button class="button" slot="trigger">Debug</button>
             <pre>{{ props.row }}</pre>
           </b-collapse>
 
