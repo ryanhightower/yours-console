@@ -13,6 +13,7 @@
       <div class="container is-fluid">
         <!-- <router-link class="navbar-item" to="/">Home</router-link> -->
         <router-link class="navbar-item" to="/purchases">Purchases</router-link>
+        <router-link class="navbar-item" to="/scanner">Scanner</router-link>
         <router-link class="navbar-item" to="/login">Login</router-link>
       </div>
     </div>
