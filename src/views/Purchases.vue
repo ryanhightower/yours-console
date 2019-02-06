@@ -6,12 +6,17 @@
       >{{ show.controls ? "Hide" : "Show" }} Controls
     </a>
     <div class="controls" v-show="show.controls">
+
       <div class="search" style="padding: 0 30px;">
         <b-field label="Search">
           <b-input v-model="searchText"></b-input>
         </b-field>
-        <div class="field">
-            <h4><b>Search using</b></h4>
+
+        <b-collapse :open="true">
+          <h4 class="title is-6" slot="trigger" slot-scope="props">
+            <b-icon icon="caret-right" :class="{ 'fa-rotate-90': props.open }"></b-icon>
+            Search using
+          </h4>
             <span
               v-for="(field, idx) in Object.keys(filterBy)"
               :key="idx"
@@ -19,21 +24,14 @@
             >
               <b-checkbox v-model="filterBy[field]">{{ field }}</b-checkbox>
             </span>
+        </b-collapse>
         </div>
-        <div class="field">
-            <h4><b>Columns</b></h4>
-            <span
-              v-for="(column, idx) in Object.keys(show.columns)"
-              :key="idx"
-              style="margin-left: 10px;"
-            >
-              <b-checkbox v-model="show.columns[column]">{{
-                column
-              }}</b-checkbox>
-            </span>
-        </div>
-      </div>
+
+
+
     </div>
+
+    <hr>
 
     <div
       class="tabs"
@@ -65,7 +63,22 @@
 
     </div>
 
-    <h4>count: {{ filteredPurchases.length }}</h4>
+    <h4 class="title is-5">count: {{ filteredPurchases.length }}</h4>
+    <b-collapse :open="false">
+      <h4 class="title is-6" slot="trigger" slot-scope="props">
+        <b-icon icon="caret-right" :class="{ 'fa-rotate-90': props.open }"></b-icon>
+        Show/Hide Columns
+      </h4>
+      <span
+        v-for="(column, idx) in Object.keys(show.columns)"
+        :key="idx"
+        style="margin-left: 10px;"
+      >
+        <b-checkbox v-model="show.columns[column]">{{
+          column
+        }}</b-checkbox>
+      </span>
+    </b-collapse>
     <b-table
       :data="filteredPurchases"
       :striped="true"
@@ -326,7 +339,13 @@
       </template>
 
       <template slot="detail" slot-scope="props">
-        <h1>Set Status</h1>
+
+
+
+        <div class="details">
+          <div class="quick-actions">
+
+          <h3>Quick Actions</h3>
         <a
           class="button is-success"
           @click="setStatus({ key: props.row[`.key`], status: `arrived` })"
@@ -347,7 +366,9 @@
           @click="setStatus({ key: props.row[`.key`], status: `archive` })"
           >Archive</a
         >
-          <div class="actions">
+
+          </div>
+
             <b-field label="Status">
               <b-select placeholder="Select a status" v-model="props.row.status">
                 <option
@@ -359,18 +380,19 @@
               </b-select>
             </b-field>
 
-
-
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
           </b-field>
-          <textarea
+
+          <b-field label="Notes">
+            <b-input type="textarea" v-model="props.row.notes" placeholder="Ex. [2019-02-05] (Ryan) My note here..."></b-input>
+            <!-- <textarea
             name="notes"
             cols="100"
             rows="10"
             v-model="props.row.notes"
-          ></textarea
-          ><br />
+            ></textarea> -->
+          </b-field>
 
           <b-field>
           <a @click="savePurchase(props.row)" class="button is-primary"
@@ -519,14 +541,6 @@ export default {
         .map(purchase => purchase[`.key`])
         .join("|");
     },
-
-    searchAllCurrent() {
-      Object.keys(this.filterBy).map(key => {
-        if (key === "status") return (this.filterBy[key] = true);
-        return (this.filterBy[key] = false);
-      });
-      this.setSearchText("[^arrived|complete|archive|test]");
-    },
     setSearchText(text) {
       if (this.searchText === text) return (this.searchText = "");
       this.searchText = text;
@@ -563,6 +577,7 @@ export default {
 </script>
 
 <style lang="scss">
+.table-wrapper { overflow: scroll; }
 .table th {
     vertical-align: bottom;
 }
