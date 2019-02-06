@@ -17,15 +17,15 @@
             <b-icon icon="caret-right" :class="{ 'fa-rotate-90': props.open }"></b-icon>
             Search using
           </h4>
-            <span
-              v-for="(field, idx) in Object.keys(filterBy)"
-              :key="idx"
-              style="margin-left: 10px;"
-            >
-              <b-checkbox v-model="filterBy[field]">{{ field }}</b-checkbox>
-            </span>
+          <span
+            v-for="(field, idx) in Object.keys(filterBy)"
+            :key="idx"
+            style="margin-left: 10px;"
+          >
+            <b-checkbox v-model="filterBy[field]">{{ field }}</b-checkbox>
+          </span>
         </b-collapse>
-        </div>
+      </div>
 
 
 
@@ -53,12 +53,12 @@
         ]"
         :key="idx"
       >
-      <a
-        class="button"
+        <a
+          class="button"
           :class="{ 'is-primary': searchText == button.searchText }"
           @click.prevent="setSearchText(button.searchText)"
           >{{ button.label }}</a
-      >
+          >
       </span>
 
     </div>
@@ -346,39 +346,48 @@
           <div class="quick-actions">
 
           <h3>Quick Actions</h3>
-        <a
-          class="button is-success"
-          @click="setStatus({ key: props.row[`.key`], status: `arrived` })"
-          >Arrived</a
-        >
-        <a
-          class="button is-success"
-          @click="setStatus({ key: props.row[`.key`], status: `complete` })"
-          >Complete</a
-        >
-        <a
-          class="button is-warning"
-          @click="setStatus({ key: props.row[`.key`], status: `test` })"
-          >Testing</a
-        >
-        <a
-          class="button is-danger"
-          @click="setStatus({ key: props.row[`.key`], status: `archive` })"
-          >Archive</a
-        >
+
+            <a class="button" @click="sendToAuthor(props.row.key)" >
+              <b-icon icon="robot"></b-icon>
+              <span>Send to Authoring</span>
+              <b-loading
+                :is-full-page="false"
+                :active.sync="loading.author"
+              ></b-loading>
+            </a>
+              <a
+                class="button is-success"
+                @click="setStatus({ key: props.row[`.key`], status: `arrived` })"
+                >Arrived</a
+              >
+              <a
+                class="button is-success"
+                @click="setStatus({ key: props.row[`.key`], status: `complete` })"
+                >Complete</a
+              >
+              <a
+                class="button is-warning"
+                @click="setStatus({ key: props.row[`.key`], status: `test` })"
+                >Testing</a
+              >
+              <a
+                class="button is-danger"
+                @click="setStatus({ key: props.row[`.key`], status: `archive` })"
+                >Archive</a
+              >
 
           </div>
 
-            <b-field label="Status">
-              <b-select placeholder="Select a status" v-model="props.row.status">
-                <option
-                  v-for="(option, idx) in statuses"
-                  :value="option"
-                  :key="idx">
-                  {{ option }}
-                </option>
-              </b-select>
-            </b-field>
+          <b-field label="Status">
+            <b-select placeholder="Select a status" v-model="props.row.status">
+              <option
+                v-for="(option, idx) in statuses"
+                :value="option"
+                :key="idx">
+                {{ option }}
+              </option>
+            </b-select>
+          </b-field>
 
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
@@ -387,10 +396,10 @@
           <b-field label="Notes">
             <b-input type="textarea" v-model="props.row.notes" placeholder="Ex. [2019-02-05] (Ryan) My note here..."></b-input>
             <!-- <textarea
-            name="notes"
-            cols="100"
-            rows="10"
-            v-model="props.row.notes"
+              name="notes"
+              cols="100"
+              rows="10"
+              v-model="props.row.notes"
             ></textarea> -->
           </b-field>
 
@@ -424,6 +433,7 @@
 <script>
 import { get, pick } from "lodash";
 import { mapState, mapGetters } from "vuex";
+import api from "../services/api";
 import { auth } from "../firebase";
 import purchasesMixin from "@/mixins/purchasesMixin";
 
@@ -463,6 +473,9 @@ export default {
           producer: true,
           author: false
         }
+      },
+      loading: {
+        author: false
       },
       defaultSortBy: "date_placed",
       defaultSortOrder: "desc",
@@ -532,6 +545,25 @@ export default {
         name: user.displayName
       };
       this.savePurchase(purchase);
+    },
+
+    sendToAuthor(purchaseId) {
+      this.loading.author = true;
+      const options = {
+        bitRate: 4000,
+        assetsOnly: false
+      }; // TODO: implement auto-author options
+
+      api.post(
+          `/purchases/${purchaseId}/autoAuthor`,
+          options
+      )
+        .then(() => {
+          this.loading.author = false;
+        })
+        .catch( err => {
+          this.loading.author = false;
+        })
     },
 
     getStalledPurchasesSearchText() {

@@ -10,6 +10,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "buefy": "^0.7.2",
     "firebase": "^5.8.0",
     "firebaseui": "^3.5.2",
