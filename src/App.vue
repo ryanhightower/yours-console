@@ -17,7 +17,7 @@
         <router-link class="navbar-item" to="/login">Login</router-link>
       </div>
     </div>
-    <keep-alive>
+    <keep-alive include="Purchases">
       <router-view />
     </keep-alive>
   </div>

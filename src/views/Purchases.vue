@@ -450,6 +450,7 @@ import { auth } from "../firebase";
 import purchasesMixin from "@/mixins/purchasesMixin";
 
 export default {
+  name: "Purchases",
   components: {},
   // NOTE: If you don't know where something is, check the purchasesMixin
   mixins: [purchasesMixin],
