@@ -180,6 +180,14 @@
               title="Billed successfully"
             ></b-icon> -->
             <b-icon
+              :icon="props.row.deviceMfr === `Apple` ? `apple` : `android`"
+              pack="fab"
+              type="is-primary"
+              size="is-small"
+              v-show="props.row.deviceMfr"
+              :title="props.row.deviceModel"
+            ></b-icon>
+            <b-icon
               icon="exclamation-triangle"
               type="is-warning"
               size="is-small"
