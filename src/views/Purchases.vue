@@ -39,74 +39,30 @@
       class="tabs"
       style="display:flex; justify-content: center; flex-wrap: wrap; padding: 1px;"
       >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == '' }"
-        @click.prevent="setSearchText('')"
-        >All</a
+
+      <span
+        v-for="(button, idx) in [
+          { label: `All`, searchText: `` },
+          { label: `Uploading`, searchText: `initial` },
+          { label: `Production`, searchText: `production` },
+          { label: `Authoring`, searchText: `authoring|producerApproved` },
+          { label: `Fulfillment`, searchText: `authoring|producerApproved|submittedForburn` },
+          { label: `Shipping`, searchText: `shipping` },
+          { label: `Complete`, searchText: `arrived|complete` },
+          { label: `Archive`, searchText: `archive` },
+          // { label: `Stalled`, searchText: getStalledPurchasesSearchText() },
+          { label: `All Current`, searchText: `initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn` },
+        ]"
+        :key="idx"
       >
       <a
         class="button"
-        :class="{ 'is-primary': searchText == 'initial' }"
-        @click.prevent="setSearchText('initial')"
-        >Uploading</a
+          :class="{ 'is-primary': searchText == button.searchText }"
+          @click.prevent="setSearchText(button.searchText)"
+          >{{ button.label }}</a
       >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'production' }"
-        @click.prevent="setSearchText('production')"
-        >Production</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'authoring|producerApproved' }"
-        @click.prevent="setSearchText('authoring|producerApproved')"
-        >Authoring</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'authoring|producerApproved|submittedForburn' }"
-        @click.prevent="setSearchText('authoring|producerApproved|submittedForburn')"
-        >Fulfillment</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'shipping' }"
-        @click.prevent="setSearchText('shipping')"
-        >Shipping</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'arrived|complete' }"
-        @click.prevent="setSearchText('arrived|complete')"
-        >Complete</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': searchText == 'archive' }"
-        @click.prevent="setSearchText('archive')"
-        >Archive</a
-      >
-      <a
-        class="button"
-        :class="{ 'is-primary': false }"
-        @click.prevent="setSearchText(getStalledPurchasesSearchText())"
-        >Stalled</a
-      >
-      <a
-        class="button"
-        :class="{
-          'is-primary':
-            searchText ==
-            'initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn'
-        }"
-        @click.prevent="
-          setSearchText(
-            'initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn'
-          )
-        "
-        >All Current</a
-      >
+      </span>
+
     </div>
 
     <h4>count: {{ filteredPurchases.length }}</h4>
