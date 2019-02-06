@@ -2,17 +2,18 @@
   <div class="purchases container is-fluid">
     <h1 style="font-weight:bold; font-size:2em;">Purchases</h1>
     <hr />
-    <a class="button" @click="show.controls = !show.controls"
-      >{{ show.controls ? "Hide" : "Show" }} Controls
-    </a>
-    <div class="controls" v-show="show.controls">
 
-      <div class="search" style="padding: 0 30px;">
-        <b-field label="Search">
+    <b-collapse :open="true">
+
+        <h4 class="title is-5" slot="trigger" slot-scope="props">
+          <b-icon icon="caret-right" :class="{ 'fa-rotate-90': props.open }"></b-icon>
+          Search
+        </h4>
+        <b-field label="">
           <b-input v-model="searchText"></b-input>
         </b-field>
 
-        <b-collapse :open="true">
+        <b-collapse :open="false">
           <h4 class="title is-6" slot="trigger" slot-scope="props">
             <b-icon icon="caret-right" :class="{ 'fa-rotate-90': props.open }"></b-icon>
             Search using
@@ -25,11 +26,12 @@
             <b-checkbox v-model="filterBy[field]">{{ field }}</b-checkbox>
           </span>
         </b-collapse>
-      </div>
+
+    </b-collapse>
 
 
 
-    </div>
+    <!-- </div> -->
 
     <hr>
 
@@ -345,37 +347,29 @@
         <div class="details">
           <div class="quick-actions">
 
-          <h3>Quick Actions</h3>
+          <span>
+            <h6 class="title is-6">Quick Actions</h6>
+          </span>
 
-            <a class="button" @click="sendToAuthor(props.row.key)" >
-              <b-icon icon="robot"></b-icon>
-              <span>Send to Authoring</span>
-              <b-loading
-                :is-full-page="false"
-                :active.sync="loading.author"
-              ></b-loading>
-            </a>
+              <a class="button" @click="sendToAuthor(props.row.key)" >
+                <b-icon icon="robot"></b-icon>
+                <span>Send to Authoring</span>
+                <b-loading
+                  :is-full-page="false"
+                  :active.sync="loading.author"
+                ></b-loading>
+              </a>
               <a
-                class="button is-success"
-                @click="setStatus({ key: props.row[`.key`], status: `arrived` })"
-                >Arrived</a
-              >
-              <a
-                class="button is-success"
-                @click="setStatus({ key: props.row[`.key`], status: `complete` })"
-                >Complete</a
-              >
-              <a
-                class="button is-warning"
-                @click="setStatus({ key: props.row[`.key`], status: `test` })"
-                >Testing</a
-              >
-              <a
-                class="button is-danger"
-                @click="setStatus({ key: props.row[`.key`], status: `archive` })"
-                >Archive</a
-              >
-
+                v-for="(button, idx) in [
+                  { label: 'Arrived', status: 'arrived', type: 'is-success' },
+                  { label: 'Complete', status: 'complete', type: 'is-success' },
+                  { label: 'Testing', status: 'testing', type: 'is-warning' },
+                  { label: 'Archive', status: 'archive', type: 'is-danger' },
+                ]"
+                :key="idx"
+                :class="[`button`, button.type]"
+                @click="setStatus({ key: props.row[`.key`], status: button.status })"
+                >{{ button.label }}</a>
           </div>
 
           <b-field label="Status">
@@ -395,12 +389,6 @@
 
           <b-field label="Notes">
             <b-input type="textarea" v-model="props.row.notes" placeholder="Ex. [2019-02-05] (Ryan) My note here..."></b-input>
-            <!-- <textarea
-              name="notes"
-              cols="100"
-              rows="10"
-              v-model="props.row.notes"
-            ></textarea> -->
           </b-field>
 
           <b-field>
@@ -456,7 +444,6 @@ export default {
         producer: false
       },
       show: {
-        controls: true,
         columns: {
           thumbnail: true,
           id: true,
