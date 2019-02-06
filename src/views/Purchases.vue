@@ -11,7 +11,7 @@
           <b-input v-model="searchText"></b-input>
         </b-field>
         <div class="field">
-          <b-field label="Search using: ">
+            <h4><b>Search using</b></h4>
             <span
               v-for="(field, idx) in Object.keys(filterBy)"
               :key="idx"
@@ -19,10 +19,9 @@
             >
               <b-checkbox v-model="filterBy[field]">{{ field }}</b-checkbox>
             </span>
-          </b-field>
         </div>
         <div class="field">
-          <b-field label="Columns: ">
+            <h4><b>Columns</b></h4>
             <span
               v-for="(column, idx) in Object.keys(show.columns)"
               :key="idx"
@@ -32,7 +31,6 @@
                 column
               }}</b-checkbox>
             </span>
-          </b-field>
         </div>
       </div>
     </div>
@@ -469,7 +467,7 @@ export default {
         producer: false
       },
       show: {
-        controls: false,
+        controls: true,
         columns: {
           thumbnail: true,
           id: true,
