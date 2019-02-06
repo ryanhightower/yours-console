@@ -393,12 +393,20 @@
           @click="setStatus({ key: props.row[`.key`], status: `archive` })"
           >Archive</a
         >
+          <div class="actions">
+            <b-field label="Status">
+              <b-select placeholder="Select a status" v-model="props.row.status">
+                <option
+                  v-for="(option, idx) in statuses"
+                  :value="option"
+                  :key="idx">
+                  {{ option }}
+                </option>
+              </b-select>
+            </b-field>
 
-        <pre v-show="props.row.trackingNumber">Shipping:
-tracking: <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{ props.row.trackingNumber }}</a>
-status: {{ pick(props.row,['shippingStatus']) }}</pre>
 
-        <div class="notes">
+
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
           </b-field>
@@ -439,7 +447,7 @@ status: {{ pick(props.row,['shippingStatus']) }}</pre>
 
 <script>
 import { get, pick } from "lodash";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { auth } from "../firebase";
 import purchasesMixin from "@/mixins/purchasesMixin";
 
@@ -488,6 +496,9 @@ export default {
     ...mapState({
       files: state => state.purchases.filesByPurchase,
       loadingFiles: state => state.purchases.loading.filesByPurchase
+    }),
+    ...mapGetters({
+      statuses: 'purchases/statuses',
     }),
     filteredPurchases() {
       if (!this.searchText || this.searchText === "")

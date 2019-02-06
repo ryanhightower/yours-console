@@ -38,6 +38,9 @@ export default {
     },
     purchases(state) {
       return Object.values(state.all);
+    },
+    statuses(state) {
+      return Object.keys(state.STATUS_SORT_VALS);
     }
   },
   mutations: {
