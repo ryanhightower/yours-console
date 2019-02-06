@@ -167,76 +167,34 @@
         </b-table-column>
 
         <b-table-column
-          field="billedStatus"
           label="Icons"
           :visible="show.columns.icons"
         >
           <div>
-            <!-- <b-icon
-              icon="dollar-sign"
-              type="is-success"
-              size="is-small"
-              v-show="props.row.chargeId != undefined"
-              title="Billed successfully"
-            ></b-icon> -->
-            <b-icon
-              :icon="props.row.deviceMfr === `Apple` ? `apple` : `android`"
-              pack="fab"
-              type="is-primary"
-              size="is-small"
-              v-show="props.row.deviceMfr"
-              :title="props.row.deviceModel"
-            ></b-icon>
-            <b-icon
-              icon="exclamation-triangle"
-              type="is-warning"
-              size="is-small"
-              v-show="props.row.billingError"
-              title="Error when billing"
-            ></b-icon>
-            <!-- NOTE: I don't know if we set "usedSubscription" any more -->
-            <b-icon
-              icon="infinity"
-              type="is-success"
-              size="is-small"
-              v-show="props.row.usedSubscription"
-              title="Used subscription"
-            ></b-icon>
-            <b-icon
-              icon="infinity"
-              type="is-success"
-              size="is-small"
-              v-show="props.row.discQuantity === 0"
-              title="Streaming only"
-            ></b-icon>
-            <b-icon
-              icon="star"
-              type="is-success"
-              size="is-small"
-              v-show="props.row.usedCredit"
-              title="Used a credit"
-            ></b-icon>
-            <b-icon
-              icon="users"
-              type="is-success"
-              size="is-small"
-              v-show="props.row.usedPromo"
-              title="Used a promo code"
-            ></b-icon>
-            <b-icon
-              icon="times"
-              type="is-danger"
-              v-show="!props.row.billingComplete && !props.row.billingError"
-              title="Was not billed"
-            ></b-icon>
-            <b-tooltip :label="`Qty: ${props.row.discQuantity}`">
-            <b-icon
-              icon="compact-disc"
-                :type="props.row.discQuantity > 1 ? 'is-warning' : 'is-success'"
-              v-show="props.row.discQuantity"
-              :title="`Qty: ${props.row.discQuantity}`"
-            ></b-icon>
-            </b-tooltip>
+            <span
+              v-for="(icon, idx) in [
+                { key: props.row.deviceMfr === `Apple` ? `apple` : `android`, type: `is-primary`, title: props.row.deviceModel, condition: props.row.deviceMfr, size: ``, pack: `fab` },
+                { key: `times`, type: `is-danger`, title: `Was not billed`, condition: !props.row.billingComplete && !props.row.billingError },
+                { key: `exclamation-triangle`, type: `is-warning`, title: `Error when billing`, condition: props.row.billingError },
+                { key: `star`, type: `is-success`, title: `Used a credit`, condition: props.row.usedCredit },
+                { key: `users`, type: `is-success`, title: `Used a promo code`, condition: props.row.usedPromo },
+                { key: `infinity`, type: `is-success`, title: `Streaming only`, condition: props.row.discQuantity === 0 },
+                { key: `compact-disc`, type: props.row.discQuantity > 1 ? `is-warning` : `is-success`, title: `Qty: ${props.row.discQuantity}`, condition: props.row.discQuantity, size: `` },
+              ]"
+              :key="idx"
+              >
+              <b-tooltip :label="icon.title">
+                <b-icon
+                  :icon="icon.key"
+                  :type="icon.type"
+                  :title="icon.title"
+                  :size="get(icon, 'size', 'is-small')"
+                  :pack="get(icon, 'pack', 'fas')"
+                  v-if="icon.condition"
+                  ></b-icon>
+              </b-tooltip>
+            </span>
+
           </div>
         </b-table-column>
 
