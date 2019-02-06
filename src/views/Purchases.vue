@@ -261,7 +261,7 @@
           </div>
         </b-table-column>
 
-        <b-table-column field="files" label="Files" :visible="true">
+        <b-table-column field="files" label="Files" :visible="show.columns.files">
           <div :class="{ 'file-count': true, loading: loadingFiles }">
             {{ getFilesRatioText(props.row[`.key`]) }}
             <b-loading
@@ -476,6 +476,7 @@ export default {
           statusSort: false,
           status: true,
           icons: true,
+          files: true,
           customer: true,
           title: true,
           date: true,
