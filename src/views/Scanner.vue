@@ -4,7 +4,11 @@
     <h1>QR Scanner</h1>
     <qrcode-stream @decode="processCode" :paused="paused" :track="repaint" @init="logErrors"></qrcode-stream>
     <!-- <video id="scanner"></video> -->
-    <router-link :to="{ name: 'purchase', params: { purchaseId }}" class="button" v-if="purchaseId">Go to {{ purchaseId }}</router-link>
+
+    <!-- <router-link :to="{ name: 'purchase', params: { purchaseId }}" class="button" v-if="purchaseId">Go to {{ purchaseId }}</router-link> -->
+    <a :href="`https://console.yours.co/purchase/${ purchaseId }`" class="button is-primary" v-if="purchaseId">Go to {{ purchaseId }}</a>
+
+    <a @click="paused = false" class="button">Unpause Scanner</a>
   </div>
 </template>
 
