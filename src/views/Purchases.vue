@@ -27,6 +27,8 @@
           </span>
         </b-collapse>
 
+        <a @click.prevent="scannerModal()" class="button is-primary">Open Scanner</a>
+
     </b-collapse>
 
 
@@ -499,6 +501,16 @@ export default {
       };
       this.savePurchase(purchase);
     },
+
+    scannerModal(){
+      this.$modal.open({
+        parent: this,
+        component: () => import("@/views/Scanner"),
+        hasModalCard: true
+      })
+    },
+
+
 
     sendToAuthor(purchaseId) {
       this.loading.author = true;
