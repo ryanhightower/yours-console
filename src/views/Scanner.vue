@@ -28,6 +28,7 @@ export default {
       const { purchaseId } = JSON.parse(data);
       console.log(`purchaseId: ${purchaseId}`);
       this.purchaseId = purchaseId;
+      this.$emit("decode", purchaseId);
       // this.$router.push({ name: 'purchase', params: { purchaseId } });
     },
     repaint (location, ctx) {

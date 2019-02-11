@@ -27,7 +27,10 @@
           </span>
         </b-collapse>
 
-        <a @click.prevent="scannerModal()" class="button is-primary">Open Scanner</a>
+        <a @click.prevent="show.scanner = true" class="button is-primary">Open Scanner</a>
+        <b-modal :active.sync="show.scanner">
+          <scanner @decode="handleScan"></scanner>
+        </b-modal>
 
     </b-collapse>
 
@@ -395,7 +398,9 @@ import purchasesMixin from "@/mixins/purchasesMixin";
 
 export default {
   name: "Purchases",
-  components: {},
+  components: {
+    Scanner: () => import("@/views/Scanner"),
+  },
   // NOTE: If you don't know where something is, check the purchasesMixin
   mixins: [purchasesMixin],
   data() {
@@ -427,7 +432,8 @@ export default {
           // updatedAt: false,
           producer: true,
           author: false
-        }
+        },
+        scanner: false
       },
       loading: {
         author: false
@@ -500,6 +506,12 @@ export default {
         name: user.displayName
       };
       this.savePurchase(purchase);
+    },
+
+    handleScan(value){
+      console.log("scanned", { value });
+      this.setSearchText(value);
+      this.show.scanner = false;
     },
 
     scannerModal(){
