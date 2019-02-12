@@ -122,6 +122,9 @@
                 }"
                 >{{ purchase.dvd_cover_title }}</router-link
               >
+              <a :href="`https://console.yours.co/purchase/${ purchase[`.key`]}`" target="_blank" class="is-pulled-right">
+                <b-icon size="is-small" icon="external-link-alt"></b-icon>
+              </a>
             </p>
             <p class="subtitle is-6"><b>Status:</b> {{ purchase.status }}</p>
             <p><b>Discs:</b> {{ purchase.discQuantity }}</p>
