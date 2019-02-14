@@ -539,8 +539,8 @@ export default {
     },
 
     sendToAru(purchase) {
-      this.setStatus({ key: purchase[".key"], status: "submittedForBurn" });
-      purchase.authored = true;
+      if( !purchase.authored ) purchase.authored = Date.now();
+      purchase.status = "submittedForBurn";
       this.savePurchase(purchase);
       this.$store.commit("SEND_TO_ARU", purchase);
     },
