@@ -73,9 +73,9 @@ export default {
     }
   },
   actions: {
-    setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
+    setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref, limit = 9999999 }) => {
       commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
-      bindFirebaseRef("all", ref);
+      bindFirebaseRef("all", ref.orderByChild("date_created").limitToLast(limit));
       commit("SET_REF", { key: "purchases", ref });
       ref.on("value", () => {
         commit("TOGGLE_LOADING_STATE", { key: "purchases", value: false });
