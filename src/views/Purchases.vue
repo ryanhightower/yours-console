@@ -51,7 +51,7 @@
           { label: `Uploading`, searchText: `initial` },
           { label: `Production`, searchText: `production` },
           { label: `Authoring`, searchText: `authoring|producerApproved` },
-          { label: `Fulfillment`, searchText: `authoring|producerApproved|submittedForburn` },
+          { label: `Fulfillment`, searchText: `authored|submittedForburn` },
           { label: `Shipping`, searchText: `shipping` },
           { label: `Complete`, searchText: `arrived|complete` },
           { label: `Archive`, searchText: `archive` },
@@ -309,6 +309,16 @@
             ><b-icon icon="print"></b-icon
           ></a>
         </b-table-column>
+
+        <b-table-column
+          label="Burn"
+          width="40"
+          :visible="show.columns.author"
+        >
+          <a class="button" @click.prevent="sendToAru(props.row)" v-if="props.row.status === 'authored'"
+            ><b-icon icon="fire"></b-icon
+          ></a>
+        </b-table-column>
       </template>
 
       <template slot="detail" slot-scope="props">
@@ -549,6 +559,11 @@ export default {
         .filter(purchase => this.isStalled(purchase))
         .map(purchase => purchase[`.key`])
         .join("|");
+    sendToAru(purchase) {
+      this.setStatus({ key: purchase[".key"], status: "submittedForBurn" });
+      purchase.authored = true;
+      this.savePurchase(purchase);
+      this.$store.commit("SEND_TO_ARU", purchase);
     },
     setSearchText(text) {
       if (this.searchText === text) return (this.searchText = "");
