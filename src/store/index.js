@@ -19,6 +19,7 @@ export default new Vuex.Store({
       ADDRESSES_BY_USER: db.ref("addressesByUser"),
       ARCHIVED_PURCHASES: db.ref("archivedPurchases"),
       ARCHIVED_TRACKING_BY_PURCHASE: db.ref("archivedTrackingByPurchase"),
+      ARUS: db.ref('arus'),
       CONSTANTS: db.ref("constants"),
       DISLIKED_MOVIES_BY_USER: db.ref("dislikedMoviesByUser"),
       EVENTS: db.ref("events"),
@@ -49,6 +50,12 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    ...firebaseMutations
+    ...firebaseMutations,
+    SEND_TO_ARU(state, purchase) {
+      state.refs.ARUs.child(`MAL/jobs/${purchase[".key"]}`).set({
+        status: "initial",
+        quantity: purchase.discQuantity
+      })
+    }
   }
 });
