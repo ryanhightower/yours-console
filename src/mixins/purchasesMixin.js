@@ -23,10 +23,11 @@ export default {
   },
   created() {
     this.$store.dispatch("purchases/setPurchases", {
-      ref: this.refs.PURCHASES
+      ref: this.refs.PURCHASES,
+      // limit: 1500 // in case we need to limit someday.
     });
-    this.$store.dispatch("purchases/setFilesByPurchase", {
-      ref: this.refs.FILES_BY_PURCHASE
-    });
+    // this.$store.dispatch("purchases/setFilesByPurchase", {
+    //   ref: this.refs.FILES_BY_PURCHASE
+    // });
   }
 };

@@ -55,7 +55,6 @@
           { label: `Shipping`, searchText: `shipping` },
           { label: `Complete`, searchText: `arrived|complete` },
           { label: `Archive`, searchText: `archive` },
-          // { label: `Stalled`, searchText: getStalledPurchasesSearchText() },
           { label: `All Current`, searchText: `initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn` },
         ]"
         :key="idx"
@@ -203,13 +202,9 @@
           </div>
         </b-table-column>
 
-        <b-table-column field="files" label="Files" :visible="show.columns.files">
-          <div :class="{ 'file-count': true, loading: loadingFiles }">
-            {{ getFilesRatioText(props.row[`.key`]) }}
-            <b-loading
-              :is-full-page="false"
-              :active.sync="loadingFiles"
-            ></b-loading>
+        <b-table-column field="uploadProgressPercent" label="Files" :visible="show.columns.files">
+          <div :class="{ 'file-count': true }">
+            {{ props.row.uploadedFileCount }} / {{ props.row.fileCount }}
           </div>
         </b-table-column>
 
@@ -524,16 +519,6 @@ export default {
       this.show.scanner = false;
     },
 
-    scannerModal(){
-      this.$modal.open({
-        parent: this,
-        component: () => import("@/views/Scanner"),
-        hasModalCard: true
-      })
-    },
-
-
-
     sendToAuthor(purchaseId) {
       this.loading.author = true;
       const options = {
@@ -553,30 +538,28 @@ export default {
         })
     },
 
-    getStalledPurchasesSearchText() {
-      this.searchText = ""; // clear filter first so it searches all purchases.
-      return this.filteredPurchases
-        .filter(purchase => this.isStalled(purchase))
-        .map(purchase => purchase[`.key`])
-        .join("|");
     sendToAru(purchase) {
       this.setStatus({ key: purchase[".key"], status: "submittedForBurn" });
       purchase.authored = true;
       this.savePurchase(purchase);
       this.$store.commit("SEND_TO_ARU", purchase);
     },
+
     setSearchText(text) {
       if (this.searchText === text) return (this.searchText = "");
       this.searchText = text;
     },
+
     setStatus({ key, status }) {
       // console.log(`setStatus ${status} to ${key}`);
       this.$store.commit("purchases/SET_PURCHASE_STATUS", { key, status });
     },
+
     savePurchase(purchase) {
       // console.log(`savePurchase ${JSON.stringify(purchase)}`);
       this.$store.commit("purchases/UPDATE_PURCHASE", purchase);
     },
+
     isStalled(purchase) {
       // stalled if still in uploading status
       // AND lastUpload was more than 2 days ago
@@ -587,15 +570,6 @@ export default {
         purchase.lastUploadTimestamp * 1000 < twoDaysAgo
       );
     },
-    getFilesForPurchase(purchaseId) {
-      return this.files.filter(file => file[`.key`] === purchaseId)[0];
-    },
-    getFilesRatioText(purchaseId) {
-      const files = this.getFilesForPurchase(purchaseId);
-      const numUploaded = Object.keys(this.get(files, "uploaded", {})).length;
-      const numSelected = Object.keys(this.get(files, "selected", {})).length;
-      return `${numUploaded} / ${numSelected}`;
-    }
   }
 };
 </script>
