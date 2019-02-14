@@ -19,6 +19,7 @@ export default {
       inProduction: 30,
       producerApproved: 40,
       authoring: 50,
+      authored: 60, // TODO: Add to Firebase function
       submittedForBurn: 70,
       burnComplete: 80,
       packaging: 90,
