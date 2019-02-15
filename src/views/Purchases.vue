@@ -337,7 +337,7 @@
               </a>
               <a
                 v-for="(button, idx) in [
-                  { label: 'inProduction', status: 'inProduction', type: 'is-primary' },
+                  { label: 'Redo', status: 'redo', type: 'is-primary' },
                   { label: 'Arrived', status: 'arrived', type: 'is-success' },
                   { label: 'Complete', status: 'complete', type: 'is-success' },
                   { label: 'Testing', status: 'testing', type: 'is-warning' },
