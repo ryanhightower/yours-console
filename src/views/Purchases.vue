@@ -349,19 +349,18 @@
                 >{{ button.label }}</a>
           </div>
 
+
           <span>
             <h6 class="title is-6">Status</h6>
           </span>
-          <b-field label="">
-            <br><b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
-              <option
-                v-for="(option, idx) in statuses"
-                :value="option"
-                :key="idx">
-                {{ option }}
-              </option>
-            </b-select>
-          </b-field>
+          <b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
+            <option
+              v-for="(option, idx) in statuses"
+              :value="option"
+              :key="idx">
+              {{ option }}
+            </option>
+          </b-select>
           <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a>
 
           <b-field label="Disc Quantity">
