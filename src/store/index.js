@@ -52,7 +52,7 @@ export default new Vuex.Store({
   mutations: {
     ...firebaseMutations,
     SEND_TO_ARU(state, purchase) {
-      state.refs.ARUs.child(`MAL/jobs/${purchase[".key"]}`).set({
+      state.refs.ARUS.child(`MAL/jobs/${purchase[".key"]}`).set({
         status: "initial",
         quantity: purchase.discQuantity
       })
