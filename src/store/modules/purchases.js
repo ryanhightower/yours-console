@@ -1,4 +1,6 @@
 import { firebaseAction } from "vuexfire";
+import { auth } from "../../firebase";
+import { get } from "lodash";
 
 export default {
   namespaced: true,
@@ -18,9 +20,11 @@ export default {
       readyForProduction: 20,
       inProduction: 30,
       producerApproved: 40,
+      authorQueued: 45,
       authoring: 50,
       authored: 60, // TODO: Add to Firebase function
       submittedForBurn: 70,
+      burning: 75,
       burnComplete: 80,
       packaging: 90,
       packagingApproved: 100,
@@ -42,7 +46,10 @@ export default {
     },
     statuses(state) {
       return Object.keys(state.STATUS_SORT_VALS);
-    }
+  },
+    purchaseById: state => purchaseId => {
+      return state.all.find(purchase => purchase[".key"] === purchaseId);
+    },
   },
   mutations: {
     TOGGLE_LOADING_STATE(state, { key, value }) {
@@ -73,6 +80,24 @@ export default {
     }
   },
   actions: {
+    setPurchaseStatus({commit, state, getters}, { purchaseId, status, user }) {
+      if (!status || !purchaseId) return;
+      user = user || auth.currentUser;
+      const purchase = getters.purchaseById(purchaseId);
+      const d = new Date();
+      const dateStr = `${d.getFullYear()}-${("0" + d.getMonth()).slice(-2)}-${("0" + d.getDate()).slice(-2)}`
+      const newNote = `${
+        purchase.notes ? purchase.notes + "\n" : ""
+      }[${dateStr}](${user.displayName}) set status from ${
+        purchase.status
+      } to ${status}`;
+      // console.log({newNote})
+      // console.log({user, purchase});
+
+      purchase.notes = newNote;
+      purchase.status = status;
+      commit("UPDATE_PURCHASE", purchase);
+    },
     setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref, limit = 9999999 }) => {
       commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
       bindFirebaseRef("all", ref.orderByChild("date_created").limitToLast(limit));

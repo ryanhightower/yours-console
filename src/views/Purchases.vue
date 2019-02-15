@@ -50,7 +50,7 @@
           { label: `All`, searchText: `` },
           { label: `Uploading`, searchText: `initial` },
           { label: `Production`, searchText: `production` },
-          { label: `Authoring`, searchText: `authoring|producerApproved` },
+          { label: `Authoring`, searchText: `authoring|authorQueued|producerApproved` },
           { label: `Fulfillment`, searchText: `authored|submittedForburn` },
           { label: `Shipping`, searchText: `shipping` },
           { label: `Complete`, searchText: `arrived|complete` },
@@ -344,7 +344,7 @@
                 ]"
                 :key="idx"
                 :class="[`button`, button.type]"
-                @click="setStatus({ key: props.row[`.key`], status: button.status })"
+                @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
                 >{{ button.label }}</a>
           </div>
 
@@ -532,6 +532,7 @@ export default {
       )
         .then(() => {
           this.loading.author = false;
+          this.setStatus({ purchaseId, status: "authorQueued"})
         })
         .catch( err => {
           this.loading.author = false;
@@ -550,9 +551,10 @@ export default {
       this.searchText = text;
     },
 
-    setStatus({ key, status }) {
-      // console.log(`setStatus ${status} to ${key}`);
-      this.$store.commit("purchases/SET_PURCHASE_STATUS", { key, status });
+    setStatus({ purchaseId, status }) {
+
+      this.$store.dispatch("purchases/setPurchaseStatus", { purchaseId, status });
+      // this.$store.commit("purchases/SET_PURCHASE_STATUS", { key, status });
     },
 
     savePurchase(purchase) {
