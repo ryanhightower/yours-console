@@ -300,9 +300,9 @@
           width="40"
           :visible="show.columns.author"
         >
-          <a class="button" :href="props.row.dvdCoverUrl" :download="`cover-${props.row.key}.png`" target="_blank" v-show="props.row.dvdCoverUrl"
-            ><b-icon icon="print"></b-icon
-          ></a>
+          <a class="button" :href="props.row.dvdCoverUrl" target="_blank" v-show="props.row.dvdCoverUrl">
+            <b-icon icon="print"></b-icon>
+          </a>
         </b-table-column>
 
         <b-table-column
