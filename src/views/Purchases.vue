@@ -337,6 +337,7 @@
               </a>
               <a
                 v-for="(button, idx) in [
+                  { label: 'inProduction', status: 'inProduction', type: 'is-primary' },
                   { label: 'Arrived', status: 'arrived', type: 'is-success' },
                   { label: 'Complete', status: 'complete', type: 'is-success' },
                   { label: 'Testing', status: 'testing', type: 'is-warning' },
@@ -348,8 +349,11 @@
                 >{{ button.label }}</a>
           </div>
 
-          <b-field label="Status">
-            <b-select placeholder="Select a status" v-model="props.row.status">
+          <span>
+            <h6 class="title is-6">Status</h6>
+          </span>
+          <b-field label="">
+            <br><b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
               <option
                 v-for="(option, idx) in statuses"
                 :value="option"
@@ -358,6 +362,7 @@
               </option>
             </b-select>
           </b-field>
+          <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a>
 
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
