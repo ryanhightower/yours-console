@@ -111,7 +111,7 @@ export default {
         commit("TOGGLE_LOADING_STATE", { key: "filesByPurchase", value: true });
         bindFirebaseRef("filesByPurchase", ref);
         commit("SET_REF", { key: "filesByPurchase", ref });
-        ref.on("value", () => {
+        ref.once("value", () => {
           commit("TOGGLE_LOADING_STATE", {
             key: "filesByPurchase",
             value: false
