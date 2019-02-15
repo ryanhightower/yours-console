@@ -20,6 +20,7 @@ export default {
       readyForProduction: 20,
       inProduction: 30,
       producerApproved: 40,
+      redo: 43,
       authorQueued: 45,
       authoring: 50,
       authored: 60, // TODO: Add to Firebase function
@@ -81,6 +82,7 @@ export default {
   },
   actions: {
     setPurchaseStatus({commit, state, getters}, { purchaseId, status, user }) {
+      console.log({ status, purchaseId });
       if (!status || !purchaseId) return;
       user = user || auth.currentUser;
       const purchase = getters.purchaseById(purchaseId);
