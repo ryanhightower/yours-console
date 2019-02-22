@@ -122,7 +122,7 @@
                 }"
                 >{{ purchase.dvd_cover_title }}</router-link
               >
-              <a :href="`https://console.yours.co/purchase/${ purchase[`.key`]}`" target="_blank" class="is-pulled-right">
+              <a :href="`${process.env.VUE_APP_V1_CONSOLE}/purchase/${ purchase[`.key`]}`" target="_blank" class="is-pulled-right">
                 <b-icon size="is-small" icon="external-link-alt"></b-icon>
               </a>
             </p>

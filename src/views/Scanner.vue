@@ -6,7 +6,7 @@
     <!-- <video id="scanner"></video> -->
 
     <!-- <router-link :to="{ name: 'purchase', params: { purchaseId }}" class="button" v-if="purchaseId">Go to {{ purchaseId }}</router-link> -->
-    <a :href="`https://console.yours.co/purchase/${ purchaseId }`" class="button is-primary" v-if="purchaseId">Go to {{ purchaseId }}</a>
+    <a :href="`${process.env.VUE_APP_V1_CONSOLE}/purchase/${ purchaseId }`" class="button is-primary" v-if="purchaseId">Go to {{ purchaseId }}</a>
 
     <a @click="paused = false" class="button">Unpause Scanner</a>
   </div>
