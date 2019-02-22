@@ -51,7 +51,7 @@
           { label: `Uploading`, searchText: `initial` },
           { label: `Production`, searchText: `production` },
           { label: `Authoring`, searchText: `authoring|authorQueued|producerApproved` },
-          { label: `Fulfillment`, searchText: `authored|submittedForburn` },
+          { label: `Fulfillment`, searchText: `authored|submittedForburn|burnComplete|burnError` },
           { label: `Shipping`, searchText: `shipping` },
           { label: `Complete`, searchText: `arrived|complete` },
           { label: `Archive`, searchText: `archive` },
@@ -133,7 +133,7 @@
             }"
             >{{ props.row[".key"] }}
           </router-link>
-          <a :href="`https://console.yours.co/purchase/${props.row[`.key`]}`" target="_blank" class="is-pulled-right">
+          <a :href="`${v1Console}/purchase/${props.row[`.key`]}`" target="_blank" class="is-pulled-right">
             <b-icon size="is-small" icon="external-link-alt"></b-icon>
           </a>
         </b-table-column>
@@ -220,7 +220,7 @@
             {{ props.row.user.name }}
           </router-link>
 
-          <a :href="`https://console.yours.co/user/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt" size="is-small"></b-icon></a>
+          <a :href="`${v1Console}/user/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt" size="is-small"></b-icon></a>
           <br />
           <a @click="setSearchText(props.row.user.email)">
             {{ props.row.user.email }}
@@ -310,7 +310,7 @@
           width="40"
           :visible="show.columns.author"
         >
-          <a class="button" @click.prevent="sendToAru(props.row)" v-if="props.row.status === 'authored'"
+          <a class="button" @click.prevent="sendToAru(props.row)" v-if="props.row.status === 'authored' || props.row.status === 'burnError'"
             ><b-icon icon="fire"></b-icon
           ></a>
         </b-table-column>
@@ -338,6 +338,7 @@
               <a
                 v-for="(button, idx) in [
                   { label: 'Redo', status: 'redo', type: 'is-primary' },
+                  { label: 'Shipping', status: 'shipping', type: 'is-primary' },
                   { label: 'Arrived', status: 'arrived', type: 'is-success' },
                   { label: 'Complete', status: 'complete', type: 'is-success' },
                   { label: 'Testing', status: 'testing', type: 'is-warning' },
@@ -362,6 +363,10 @@
             </option>
           </b-select>
           <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a>
+
+          <b-field label="Title">
+            <b-input v-model="props.row.dvd_cover_title"></b-input>
+          </b-field>
 
           <b-field label="Disc Quantity">
             <b-input type="number" v-model="props.row.discQuantity"></b-input>
@@ -450,7 +455,8 @@ export default {
       defaultSortBy: "date_placed",
       defaultSortOrder: "desc",
       isPaginated: true,
-      perPage: 25
+      perPage: 25,
+      v1Console: process.env.VUE_APP_V1_CONSOLE
     };
   },
   computed: {
