@@ -316,9 +316,10 @@
         </b-table-column>
       </template>
 
+
+      <!-- DETAILS -->
+
       <template slot="detail" slot-scope="props">
-
-
 
         <div class="details">
           <div class="quick-actions">
@@ -362,7 +363,12 @@
               {{ option }}
             </option>
           </b-select>
-          <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a>
+          <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a><br>
+
+          <h3 class="title is-6" v-if="props.row.trackingNumber">
+            Tracking Number<br>
+            <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
+          </h3>
 
           <b-field label="Title">
             <b-input v-model="props.row.dvd_cover_title"></b-input>
