@@ -133,7 +133,7 @@
             }"
             >{{ props.row[".key"] }}
           </router-link>
-          <a :href="`${v1Console}/purchase/${props.row[`.key`]}`" target="_blank" class="is-pulled-right">
+          <a :href="`${consoleUrl}/purchase/${props.row[`.key`]}`" target="_blank" class="is-pulled-right">
             <b-icon size="is-small" icon="external-link-alt"></b-icon>
           </a>
         </b-table-column>
@@ -220,7 +220,7 @@
             {{ props.row.user.name }}
           </router-link>
 
-          <a :href="`${v1Console}/user/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt" size="is-small"></b-icon></a>
+          <a :href="`${consoleUrl}/user/${props.row.user.id}`" target="_blank" class="is-pulled-right"><b-icon icon="external-link-alt" size="is-small"></b-icon></a>
           <br />
           <a @click="setSearchText(props.row.user.email)">
             {{ props.row.user.email }}
@@ -461,12 +461,12 @@ export default {
       defaultSortBy: "date_placed",
       defaultSortOrder: "desc",
       isPaginated: true,
-      perPage: 25,
-      v1Console: process.env.VUE_APP_V1_CONSOLE
+      perPage: 25
     };
   },
   computed: {
     ...mapState({
+      consoleUrl: state => state.consoleUrl,
       files: state => state.purchases.filesByPurchase,
       loadingFiles: state => state.purchases.loading.filesByPurchase
     }),

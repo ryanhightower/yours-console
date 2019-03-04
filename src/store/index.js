@@ -15,6 +15,7 @@ export default new Vuex.Store({
     users
   },
   state: {
+    consoleUrl: process.env.VUE_APP_V1_CONSOLE, // Link to old console
     refs: {
       ADDRESSES_BY_USER: db.ref("addressesByUser"),
       ARCHIVED_PURCHASES: db.ref("archivedPurchases"),

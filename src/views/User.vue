@@ -122,7 +122,7 @@
                 }"
                 >{{ purchase.dvd_cover_title }}</router-link
               >
-              <a :href="`${process.env.VUE_APP_V1_CONSOLE}/purchase/${ purchase[`.key`]}`" target="_blank" class="is-pulled-right">
+              <a :href="`${consoleUrl}/purchase/${ purchase[`.key`]}`" target="_blank" class="is-pulled-right">
                 <b-icon size="is-small" icon="external-link-alt"></b-icon>
               </a>
             </p>
@@ -164,6 +164,7 @@ export default {
   },
   computed: {
     ...mapState({
+      consoleUrl: state => state.consoleUrl,
       users: state => state.users.all,
       stripeCustomers: state => state.users.stripeCustomers,
       loadingUsers: state =>
