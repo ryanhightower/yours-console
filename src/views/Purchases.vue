@@ -349,6 +349,10 @@
                 :class="[`button`, button.type]"
                 @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
                 >{{ button.label }}</a>
+              <a
+                @click="archivePurchase(props.row[`.key`])"
+                class="button is-danger"
+                >!! Archive !!</a>
           </div>
 
 
@@ -587,6 +591,10 @@ export default {
         purchase.status === "initial" &&
         purchase.lastUploadTimestamp * 1000 < twoDaysAgo
       );
+    },
+
+    archivePurchase(purchaseId) {
+      this.$store.dispatch("purchases/archivePurchase", { purchaseId });
     },
   }
 };

@@ -1,6 +1,6 @@
 import { firebaseAction } from "vuexfire";
 import { auth } from "../../firebase";
-import { get } from "lodash";
+import api from "../../services/api";
 
 export default {
   namespaced: true,
@@ -100,6 +100,7 @@ export default {
       purchase.status = status;
       commit("UPDATE_PURCHASE", purchase);
     },
+
     setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref, limit = 9999999 }) => {
       commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
       bindFirebaseRef("all", ref.orderByChild("date_created").limitToLast(limit));
@@ -108,6 +109,7 @@ export default {
         commit("TOGGLE_LOADING_STATE", { key: "purchases", value: false });
       });
     }),
+
     setFilesByPurchase: firebaseAction(
       ({ bindFirebaseRef, commit }, { ref }) => {
         commit("TOGGLE_LOADING_STATE", { key: "filesByPurchase", value: true });
@@ -120,6 +122,11 @@ export default {
           });
         });
       }
-    )
+    ),
+
+    archivePurchase({ state }, { purchaseId }) {
+      api.del(`/purchases/${purchaseId}`)
+    },
+
   }
 };
