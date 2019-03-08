@@ -203,6 +203,11 @@
         </b-table-column>
 
         <b-table-column field="uploadProgressPercent" label="Files" :visible="show.columns.files">
+          <progress
+            max="100"
+            :value="props.row.uploadProgressPercent"
+            :title="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)">
+          </progress>
           <div :class="{ 'file-count': true }">
             {{ props.row.uploadedFileCount }} / {{ props.row.fileCount }}
           </div>
@@ -328,6 +333,13 @@
             <h6 class="title is-6">Quick Actions</h6>
           </span>
 
+          <a v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6" class="button" @click="giveUpOnUploading(props.row)" >
+                <span>Fail Remaining Uploads</span>
+                <b-loading
+                  :is-full-page="false"
+                  :active.sync="loading.giveup"
+                ></b-loading>
+              </a>
               <a class="button" @click="sendToAuthor(props.row.key)" >
                 <b-icon icon="robot"></b-icon>
                 <span>Send to Authoring</span>
@@ -414,7 +426,7 @@
 </template>
 
 <script>
-import { get, pick } from "lodash";
+import { get, pick, filter, sum, map } from "lodash";
 import { mapState, mapGetters } from "vuex";
 import api from "../services/api";
 import { auth } from "../firebase";
@@ -460,7 +472,8 @@ export default {
         scanner: false
       },
       loading: {
-        author: false
+        author: false,
+        giveup: false
       },
       defaultSortBy: "date_placed",
       defaultSortOrder: "desc",
@@ -533,10 +546,58 @@ export default {
       this.savePurchase(purchase);
     },
 
+    prettySize(sizeBytes) {
+      const thresh = 1024;
+      let bytes = sizeBytes;
+      if (Math.abs(bytes) < thresh) {
+        return `${bytes} B`;
+      }
+      const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+      let u = -1;
+      do {
+        bytes /= thresh;
+        u += 1;
+      } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+      return `${bytes.toFixed(1)} ${units[u]}`;
+    },
+
     handleScan(value){
       console.log("scanned", { value });
       this.setSearchText(value);
       this.show.scanner = false;
+    },
+
+    giveUpOnUploading(purchase) {
+      this.$dialog.confirm({
+        message: 'Mark all remaining upoads as failed, and move on to producing? (Normally only done on the customer\'s request)',
+        onConfirm: () => {
+          this.loading.giveup = true;
+          api.get(`users/${purchase.user.id}/files/pending`).then(result => {
+            const files = result.data.pendingUploads;
+            const purchaseFiles = filter(files, `associations.${purchase.key}`);
+            const sizeBytes = sum(map(purchaseFiles, f => parseInt(get(f, ["metadata", "estimatedFileSizeBytes"], "0"))));
+            this.$dialog.confirm({
+              message: `This will mark ${purchaseFiles.length} files failed (approximate size ${this.prettySize(sizeBytes)})`,
+              onConfirm: () => {
+                this.loading.giveup = true;
+                const payload = {
+                  assets: map(purchaseFiles, f => ({id: f.id, error: `initiated by admin: ${auth.currentUser.uid}`}))
+                };
+                api.put(`users/${purchase.user.id}/files/failures`, payload).then(() => {
+                  this.loading.giveup = false;
+                }).catch(err => {
+                  this.$dialog.alert({ message: err.message });
+                  this.loading.giveup = false;
+                });
+              }
+            });
+            this.loading.giveup = false;
+          }).catch(err => {
+            this.$dialog.alert({ message: err.message });
+            this.loading.giveup = false;
+          });
+        }
+      })
     },
 
     sendToAuthor(purchaseId) {
@@ -618,5 +679,8 @@ a.button {
     font-size: 10px;
     padding: 1em;
   }
+}
+progress {
+  width: 50px;
 }
 </style>
