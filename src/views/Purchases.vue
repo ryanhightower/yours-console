@@ -51,7 +51,7 @@
           { label: `Uploading`, searchText: `initial` },
           { label: `Production`, searchText: `production` },
           { label: `Authoring`, searchText: `authoring|authorQueued|producerApproved` },
-          { label: `Fulfillment`, searchText: `authored|submittedForburn|burnComplete|burnError` },
+          { label: `Fulfillment`, searchText: `authored|submittedForburn|burnComplete|burnError|burning|copyingForBurn` },
           { label: `Shipping`, searchText: `shipping` },
           { label: `Complete`, searchText: `arrived|complete` },
           { label: `Archive`, searchText: `archive` },
@@ -555,12 +555,14 @@ export default {
           this.setStatus({ purchaseId, status: "authorQueued"})
         })
         .catch( err => {
+          console.log({err});
           this.loading.author = false;
         })
     },
 
     sendToAru(purchase) {
       if( !purchase.authored ) purchase.authored = Date.now();
+      // TODO: let the aru-server set the status
       purchase.status = "submittedForBurn";
       this.savePurchase(purchase);
       this.$store.commit("SEND_TO_ARU", purchase);
