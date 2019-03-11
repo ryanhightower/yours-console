@@ -203,11 +203,14 @@
         </b-table-column>
 
         <b-table-column field="uploadProgressPercent" label="Files" :visible="show.columns.files">
-          <progress
-            max="100"
-            :value="props.row.uploadProgressPercent"
-            :title="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)">
-          </progress>
+          <b-tooltip :label="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)">
+            <progress
+              max="100"
+              class="file-progress"
+              :value="props.row.uploadProgressPercent"
+              :title="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)">
+            </progress>
+          </b-tooltip>
           <div :class="{ 'file-count': true }">
             {{ props.row.uploadedFileCount }} / {{ props.row.fileCount }}
           </div>
@@ -680,7 +683,7 @@ a.button {
     padding: 1em;
   }
 }
-progress {
+progress.file-progress {
   width: 50px;
 }
 </style>
