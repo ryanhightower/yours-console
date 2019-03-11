@@ -203,9 +203,11 @@
         </b-table-column>
 
         <b-table-column class="files-column" field="uploadProgressPercent" label="Files" :visible="show.columns.files">
-          <b-tooltip class="is-info" :label="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)">
+          <b-tooltip
+            class="is-info"
+            :label="'' + props.row.uploadProgressPercent + '% of ' + prettySize(props.row.estimatedTotalFileSizeBytes)"
+            v-if="props.row.status == 'initial'">
             <progress
-            v-if="props.row.status == 'initial'"
               max="100"
               class="file-progress"
               :value="props.row.uploadProgressPercent"
