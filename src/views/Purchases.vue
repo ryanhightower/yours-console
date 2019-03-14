@@ -49,7 +49,7 @@
         v-for="(button, idx) in [
           { label: `All`, searchText: `` },
           { label: `Uploading`, searchText: `initial` },
-          { label: `Production`, searchText: `production|redo` },
+          { label: `Production`, searchText: `production|^redo` },
           { label: `Authoring`, searchText: `authoring|authorQueued|producerApproved` },
           { label: `Fulfillment`, searchText: `authored|submittedForburn|burnComplete|burnError|burning|copyingForBurn` },
           { label: `Shipping`, searchText: `shipping` },
