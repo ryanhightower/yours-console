@@ -7,7 +7,7 @@ export default {
     // user: [],
     // // Might need?
     // movies: [],
-    // addresses: [],
+    userAddresses: [],
     // streamables: [],
     // failedAssets: [],
     // dislikedMovies: [],
@@ -22,14 +22,15 @@ export default {
       // user: null
     },
     index: {
-      users: [] // use this later for garbage collection.
+      users: [], // use this later for garbage collection.
       // stripeCustomers: [] // use this later for garbage collection.
+      userAddresses: []
     },
     loading: {
       users: false,
       // user: false,
       // moviesByUser: false
-      // addresses: false,
+      userAddresses: false,
       // streamables: false,
       // failedAssets: false,
       // dislikedMovies: false,
@@ -83,6 +84,21 @@ export default {
       }
       state.stripeCustomers = users;
     },
+    ADD_USER_ADDRESSES(state, { key, addresses }) {
+      // console.log("ADD_USER_ADDRESSES", { key, user });
+      // Vue.set(state.all, key, user);
+      const userAddresses = Object.assign({}, state.userAddresses);
+      userAddresses[key] = addresses;
+      if (!state.index.userAddresses.includes(key))
+        state.index.userAddresses.push(key);
+      if (state.index.userAddresses.length > state.MAX_USERS_LENGTH) {
+        // garbage collection
+        const id = state.index.userAddresses.shift();
+        // console.log("GARBAGE", { id });
+        delete userAddresses[id];
+      }
+      state.userAddresses = userAddresses;
+    },
     SET_USERS_ALL(state, obj) {
       state.all = obj;
     },
@@ -118,7 +134,21 @@ export default {
       commit("SET_REF", { key: "stripeCustomers", ref });
       ref.on("value", snap => {
         commit("ADD_STRIPE_CUSTOMER", { key, user: snap.val() });
-        commit("TOGGLE_LOADING_STATE", { key: "stripeCustomers", value: false });
+        commit("TOGGLE_LOADING_STATE", {
+          key: "stripeCustomers",
+          value: false
+        });
+      });
+    },
+    setUserAddresses({ commit }, { ref, key }) {
+      commit("TOGGLE_LOADING_STATE", { key: "addressesByUser", value: true });
+      commit("SET_REF", { key: "addressesByUser", ref });
+      ref.on("value", snap => {
+        commit("ADD_USER_ADDRESSES", { key, addresses: snap.val() });
+        commit("TOGGLE_LOADING_STATE", {
+          key: "addressesByUser",
+          value: false
+        });
       });
     },
     setMoviesByUser: firebaseAction(({ bindFirebaseRef, commit }, { ref }) => {
