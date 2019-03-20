@@ -329,117 +329,130 @@
       <!-- DETAILS -->
 
       <template slot="detail" slot-scope="props">
-        <div class="details">
-          <span v-if="consoleRole == 'admin'">
-            <div class="quick-actions">
-              <span>
-                <h6 class="title is-6">Quick Actions</h6>
-              </span>
-
-              <a
-                v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6"
-                class="button"
-                @click="giveUpOnUploading(props.row)"
-              >
-                <span>Fail Remaining Uploads</span>
-                <b-loading
-                  :is-full-page="false"
-                  :active.sync="loading.giveup"
-                ></b-loading>
-              </a>
-              <a class="button" @click="sendToAuthor(props.row.key)">
-                <b-icon icon="robot"></b-icon>
-                <span>Send to Authoring</span>
-                <b-loading
-                  :is-full-page="false"
-                  :active.sync="loading.author"
-                ></b-loading>
-              </a>
-              <a
-                v-for="(button, idx) in [
-                  { label: 'Redo', status: 'redo', type: 'is-primary' },
-                  { label: 'Shipping', status: 'shipping', type: 'is-primary' },
-                  { label: 'Arrived', status: 'arrived', type: 'is-success' },
-                  { label: 'Complete', status: 'complete', type: 'is-success' },
-                  { label: 'Testing', status: 'testing', type: 'is-warning' },
-                ]"
-                :key="idx"
-                :class="[`button`, button.type]"
-                @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
-                >{{ button.label }}
-              </a>
-              <a
-                @click="archivePurchase(props.row[`.key`])"
-                class="button is-danger"
-                >!! Archive !!
-              </a>
-            </div>
-
-
+        <div class="row-details">
+          <section class="quick-actions"
+            style="margin-bottom: 20px;"
+            v-if="consoleRole == 'admin'">
             <span>
-              <h6 class="title is-6">Status</h6>
+              <h6 class="title is-6">Quick Actions</h6>
             </span>
-            <b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
-              <option
-                v-for="(option, idx) in statuses"
-                :value="option"
-                :key="idx">
-                {{ option }}
-              </option>
-            </b-select>
-            <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a><br>
 
-            <h3 class="title is-6" v-if="props.row.trackingNumber">
-              Tracking Number<br>
-              <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
-            </h3>
-
-            <div class="title is-6" v-if="props.row.shippedWithPurchaseId">
-              Is Shipping with Purchase<br>
-              <router-link
-                :to="{
-                  name: `purchase`,
-                  params: { purchaseId: props.row.shippedWithPurchaseId }
-                }"
-                >{{ props.row.shippedWithPurchaseId }}
-              </router-link>
-                &nbsp;&nbsp;
-              <a :href="`${consoleUrl}/purchase/${props.row.shippedWithPurchaseId}`" target="_blank">
-                <b-icon size="is-small" icon="external-link-alt"></b-icon>
-              </a>
-            </div>
-
-            <b-field v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')" label="Ship With">
-              <b-input :ref="`${props.row['.key']}-ships-with-input`" placeholder="Enter Other Purchase Id"></b-input>
-            </b-field>
             <a
-              v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')"
-              @click="setShipsWithAnotherPurchase({ purchaseId: props.row['.key'], otherPurchaseId: $refs[`${props.row['.key']}-ships-with-input`].$refs.input.value })"
-              class="button is-primary">
-              Set To Ship With Other Purchase
+              v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6"
+              class="button"
+              @click="giveUpOnUploading(props.row)"
+            >
+              <span>Fail Remaining Uploads</span>
+              <b-loading
+                :is-full-page="false"
+                :active.sync="loading.giveup"
+              ></b-loading>
             </a>
-            <br>
-            <br>
-          </span>
+            <a class="button" @click="sendToAuthor(props.row.key)">
+              <b-icon icon="robot"></b-icon>
+              <span>Send to Authoring</span>
+              <b-loading
+                :is-full-page="false"
+                :active.sync="loading.author"
+              ></b-loading>
+            </a>
+            <a
+              v-for="(button, idx) in [
+                { label: 'Redo', status: 'redo', type: 'is-primary' },
+                { label: 'Shipping', status: 'shipping', type: 'is-primary' },
+                { label: 'Arrived', status: 'arrived', type: 'is-success' },
+                { label: 'Complete', status: 'complete', type: 'is-success' },
+                { label: 'Testing', status: 'testing', type: 'is-warning' },
+              ]"
+              :key="idx"
+              :class="[`button`, button.type]"
+              @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
+              >{{ button.label }}
+            </a>
+            <a
+              @click="archivePurchase(props.row[`.key`])"
+              class="button is-danger"
+              >!! Archive !!
+            </a>
+          </section>
 
-          <b-field label="Title">
-            <b-input v-model="props.row.dvd_cover_title"></b-input>
-          </b-field>
+          <section class="purchase-details content">
+            <h5>Purchase Details</h5>
 
-          <b-field label="Disc Quantity">
-            <b-input type="number" v-model="props.row.discQuantity"></b-input>
-          </b-field>
+            <!-- Admin section -->
+            <div class="admin-only" v-if="consoleRole == 'admin'" style="margin-bottom: 12px;">
+              <h6 class="is-marginless">Status</h6>
+              <b-field>
+                <b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
+                  <option
+                    v-for="(option, idx) in statuses"
+                    :value="option"
+                    :key="idx">
+                    {{ option }}
+                  </option>
+                </b-select>
+                <p class="control">
+                  <button @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</button>
+                </p>
+              </b-field>
 
-          <b-field label="Notes">
-            <b-input type="textarea" v-model="props.row.notes" placeholder="Ex. [2019-02-05] (Ryan) My note here..."></b-input>
-          </b-field>
+              <h5 v-if="props.row.trackingNumber">
+                Tracking Number<br>
+                <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
+              </h5>
 
-          <b-field>
-            <a @click="savePurchase(props.row, ['notes', 'discQuantity', 'dvd_cover_title', 'needsAttention'])" class="button is-primary"
-              >Save Details</a>
-          <b-checkbox v-model="props.row.needsAttention"
-              type="is-danger">Needs Attention! </b-checkbox>
-          </b-field>
+              <div v-if="props.row.shippedWithPurchaseId">
+                <h6 class="is-marginless">Is Shipping with Purchase</h6>
+                <router-link
+                  :to="{
+                    name: `purchase`,
+                    params: { purchaseId: props.row.shippedWithPurchaseId }
+                  }"
+                  >{{ props.row.shippedWithPurchaseId }}
+                </router-link>
+                  &nbsp;&nbsp;
+                <a :href="`${consoleUrl}/purchase/${props.row.shippedWithPurchaseId}`" target="_blank">
+                  <b-icon size="is-small" icon="external-link-alt"></b-icon>
+                </a>
+              </div>
+
+              <template v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')">
+                <b-field label="Ship with">
+                  <b-field>
+                    <b-input :ref="`${props.row['.key']}-ships-with-input`" placeholder="Enter Other Purchase Id"></b-input>
+                    <p class="control">
+                      <button
+                        @click="setShipsWithAnotherPurchase({ purchaseId: props.row['.key'], otherPurchaseId: $refs[`${props.row['.key']}-ships-with-input`].$refs.input.value })"
+                        class="button is-primary">
+                        Ship together
+                      </button>
+                    </p>
+                  </b-field>
+                </b-field>
+                <!-- <br> -->
+              </template>
+            </div>
+            <!-- End Admin section -->
+
+            <b-field label="Title" custom-class="title is-6">
+              <b-input v-model="props.row.dvd_cover_title"></b-input>
+            </b-field>
+
+            <b-field label="Disc Quantity">
+              <b-input type="number" v-model="props.row.discQuantity"></b-input>
+            </b-field>
+
+            <b-field label="Notes">
+              <b-input type="textarea" v-model="props.row.notes" placeholder="Ex. [2019-02-05] (Ryan) My note here..."></b-input>
+            </b-field>
+
+            <b-field>
+              <a @click="savePurchase(props.row, ['notes', 'discQuantity', 'dvd_cover_title', 'needsAttention'])" class="button is-primary"
+                >Save Details</a>
+            <b-checkbox v-model="props.row.needsAttention"
+                type="is-danger">Needs Attention! </b-checkbox>
+            </b-field>
+          </section>
 
           <b-collapse :open="false">
             <button class="button" slot="trigger">Debug</button>
