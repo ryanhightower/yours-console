@@ -81,10 +81,6 @@ $colors: (
 @import "~bulma";
 @import "~buefy/src/scss/buefy";
 
-.notices.has-custom-container {
-    position: fixed;
-}
-
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
