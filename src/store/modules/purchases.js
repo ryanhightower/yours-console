@@ -1,4 +1,6 @@
 import { firebaseAction } from "vuexfire";
+import _ from "lodash";
+
 import { auth } from "../../firebase";
 import api from "../../services/api";
 
@@ -32,7 +34,7 @@ export default {
       shipping: 110,
       arrived: 120,
       complete: 130,
-      archive: 990,
+      archive: 990, // DON'T USE!
       test: 999
     }
   },
@@ -47,10 +49,10 @@ export default {
     },
     statuses(state) {
       return Object.keys(state.STATUS_SORT_VALS);
-  },
+    },
     purchaseById: state => purchaseId => {
       return state.all.find(purchase => purchase[".key"] === purchaseId);
-    },
+    }
   },
   mutations: {
     TOGGLE_LOADING_STATE(state, { key, value }) {
@@ -66,14 +68,11 @@ export default {
       // })
     },
     // DANGER WILL ROBINSON!!
-    UPDATE_PURCHASE(state, purchase) {
+    UPDATE_PURCHASE(state, { purchase, fieldsToUpdate }) {
       const thePurchaseRef = state.refs.purchases.child(purchase[`.key`]);
-      const updated = Object.assign({}, purchase);
-      delete updated[".key"];
-      delete updated.key; // THIS IS ADDED IN normalizePurchases FOR SORTING.
-
+      const updates = _.pick(purchase, fieldsToUpdate);
       thePurchaseRef.update({
-        ...updated
+        ...updates
       });
     },
     SET_REF(state, { key, ref }) {
@@ -81,13 +80,18 @@ export default {
     }
   },
   actions: {
-    setPurchaseStatus({commit, state, getters}, { purchaseId, status, user }) {
+    setPurchaseStatus(
+      { commit, state, getters },
+      { purchaseId, status, user }
+    ) {
       console.log({ status, purchaseId });
       if (!status || !purchaseId) return;
       user = user || auth.currentUser;
       const purchase = getters.purchaseById(purchaseId);
       const d = new Date();
-      const dateStr = `${d.getFullYear()}-${("0" + d.getMonth()).slice(-2)}-${("0" + d.getDate()).slice(-2)}`
+      const dateStr = `${d.getFullYear()}-${("0" + d.getMonth()).slice(-2)}-${(
+        "0" + d.getDate()
+      ).slice(-2)}`;
       const newNote = `${
         purchase.notes ? purchase.notes + "\n" : ""
       }[${dateStr}](${user.displayName}) set status from ${
@@ -98,17 +102,22 @@ export default {
 
       purchase.notes = newNote;
       purchase.status = status;
-      commit("UPDATE_PURCHASE", purchase);
+      commit("UPDATE_PURCHASE", purchase, ["notes", "status"]);
     },
 
-    setPurchases: firebaseAction(({ bindFirebaseRef, commit }, { ref, limit = 9999999 }) => {
-      commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
-      bindFirebaseRef("all", ref.orderByChild("date_created").limitToLast(limit));
-      commit("SET_REF", { key: "purchases", ref });
-      ref.on("value", () => {
-        commit("TOGGLE_LOADING_STATE", { key: "purchases", value: false });
-      });
-    }),
+    setPurchases: firebaseAction(
+      ({ bindFirebaseRef, commit }, { ref, limit = 9999999 }) => {
+        commit("TOGGLE_LOADING_STATE", { key: "purchases", value: true });
+        bindFirebaseRef(
+          "all",
+          ref.orderByChild("date_created").limitToLast(limit)
+        );
+        commit("SET_REF", { key: "purchases", ref });
+        ref.on("value", () => {
+          commit("TOGGLE_LOADING_STATE", { key: "purchases", value: false });
+        });
+      }
+    ),
 
     setFilesByPurchase: firebaseAction(
       ({ bindFirebaseRef, commit }, { ref }) => {
@@ -125,8 +134,7 @@ export default {
     ),
 
     archivePurchase({ state }, { purchaseId }) {
-      api.del(`/purchases/${purchaseId}`)
-    },
-
+      api.del(`/purchases/${purchaseId}`);
+    }
   }
 };
