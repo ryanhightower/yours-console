@@ -96,12 +96,10 @@ export default {
       }[${dateStr}](${user.displayName}) set status from ${
         purchase.status
       } to ${status}`;
-      // console.log({newNote})
-      // console.log({user, purchase});
 
       purchase.notes = newNote;
       purchase.status = status;
-      commit("UPDATE_PURCHASE", purchase, ["notes", "status"]);
+      commit("UPDATE_PURCHASE", { purchase, fieldsToUpdate: ["notes", "status"] });
     },
 
     setPurchases: firebaseAction(
