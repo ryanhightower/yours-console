@@ -48,14 +48,12 @@
       <span
         v-for="(button, idx) in [
           { label: `All`, searchText: `` },
-          { label: `Uploading`, searchText: `initial` },
-          { label: `Production`, searchText: `production|^redo` },
-          { label: `Authoring`, searchText: `authoring|authorQueued|producerApproved` },
-          { label: `Fulfillment`, searchText: `authored|submittedForburn|burnComplete|burnError|burning|copyingForBurn` },
-          { label: `Shipping`, searchText: `shipping` },
-          { label: `Complete`, searchText: `arrived|complete` },
-          { label: `Archive`, searchText: `archive` },
-          { label: `All Current`, searchText: `initial|readyForProduction|inProduction|producerApproved|authoring|submittedForBurn` },
+          { label: `Uploading`, searchText: getSearchStatusesForGroup('uploading') },
+          { label: `Production`, searchText: getSearchStatusesForGroup('production') },
+          { label: `Authoring`, searchText: getSearchStatusesForGroup('authoring') },
+          { label: `Fulfillment`, searchText: getSearchStatusesForGroup('fulfillment') },
+          { label: `Shipping`, searchText: getSearchStatusesForGroup('shipping') },
+          { label: `All Current`, searchText: getSearchStatusesForGroup('all current') },
         ]"
         :key="idx"
       >
@@ -361,7 +359,6 @@
                   { label: 'Arrived', status: 'arrived', type: 'is-success' },
                   { label: 'Complete', status: 'complete', type: 'is-success' },
                   { label: 'Testing', status: 'testing', type: 'is-warning' },
-                  { label: 'Archive', status: 'archive', type: 'is-danger' },
                 ]"
                 :key="idx"
                 :class="[`button`, button.type]"
@@ -392,6 +389,33 @@
             <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
           </h3>
 
+          <div class="title is-6" v-if="props.row.shippedWithPurchaseId">
+            Is Shipping with Purchase<br>
+            <router-link
+              :to="{
+                name: `purchase`,
+                params: { purchaseId: props.row.shippedWithPurchaseId }
+              }"
+              >{{ props.row.shippedWithPurchaseId }}
+            </router-link>
+              &nbsp;&nbsp;
+            <a :href="`${consoleUrl}/purchase/${props.row.shippedWithPurchaseId}`" target="_blank">
+              <b-icon size="is-small" icon="external-link-alt"></b-icon>
+            </a>
+          </div>
+
+          <b-field v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')" label="Ship With">
+            <b-input :ref="`${props.row['.key']}-ships-with-input`" placeholder="Enter Other Purchase Id"></b-input>
+          </b-field>
+          <a
+            v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')"
+            @click="setShipsWithAnotherPurchase({ purchaseId: props.row['.key'], otherPurchaseId: $refs[`${props.row['.key']}-ships-with-input`].$refs.input.value })"
+            class="button is-primary">
+            Set To Ship With Other Purchase
+          </a>
+          <br>
+          <br>
+
           <b-field label="Title">
             <b-input v-model="props.row.dvd_cover_title"></b-input>
           </b-field>
@@ -405,7 +429,7 @@
           </b-field>
 
           <b-field>
-          <a @click="savePurchase(props.row)" class="button is-primary"
+            <a @click="savePurchase(props.row, ['notes', 'discQuantity', 'dvd_cover_title', 'needsAttention'])" class="button is-primary"
               >Save Details</a>
           <b-checkbox v-model="props.row.needsAttention"
               type="is-danger">Needs Attention! </b-checkbox>
@@ -549,7 +573,7 @@ export default {
         id: user.uid,
         name: user.displayName
       };
-      this.savePurchase(purchase);
+      this.savePurchase(purchase, [role]);
     },
 
     prettySize(sizeBytes) {
@@ -631,7 +655,7 @@ export default {
       if( !purchase.authored ) purchase.authored = Date.now();
       // TODO: let the aru-server set the status
       purchase.status = "submittedForBurn";
-      this.savePurchase(purchase);
+      this.savePurchase(purchase, ["status", "authored"]);
       this.$store.commit("SEND_TO_ARU", purchase);
     },
 
@@ -641,14 +665,38 @@ export default {
     },
 
     setStatus({ purchaseId, status }) {
-
       this.$store.dispatch("purchases/setPurchaseStatus", { purchaseId, status });
-      // this.$store.commit("purchases/SET_PURCHASE_STATUS", { key, status });
     },
 
-    savePurchase(purchase) {
-      // console.log(`savePurchase ${JSON.stringify(purchase)}`);
-      this.$store.commit("purchases/UPDATE_PURCHASE", purchase);
+    setShipsWithAnotherPurchase({ purchaseId, otherPurchaseId }) {
+      const purchase = this.$store.getters['purchases/purchaseById'](purchaseId);
+      const otherPurchase = this.$store.getters['purchases/purchaseById'](otherPurchaseId);
+      if ((purchase.shippedWithPurchaseId || !purchase.trackingNumber) && otherPurchase && otherPurchase.trackingNumber) {
+        purchase.trackingNumber = otherPurchase.trackingNumber;
+        purchase.labelId = otherPurchase.labelId;
+        purchase.labelUrl = otherPurchase.labelUrl;
+        purchase.shippedWithPurchaseId = otherPurchaseId;
+        this.savePurchase(purchase, ["trackingNumber", "labelId", "labelUrl", "shippedWithPurchaseId"]);
+      } else {
+        let message;
+        if (purchase.trackingNumber) {
+          message = "This purchase already has a tracking number!";
+        } else if (!otherPurchase) {
+          message = "purchase not found";
+        } else {
+          message = "purchase has no tracking info";
+        }
+        this.$snackbar.open({
+          duration: 5000,
+          message,
+          type: "is-danger"
+        });
+      }
+    },
+
+    savePurchase(purchase, fieldsToUpdate) {
+      // console.log(`savePurchase ${purchase['.key']}: ${JSON.stringify(updateFields)}`);
+      this.$store.commit("purchases/UPDATE_PURCHASE", { purchase, fieldsToUpdate });
     },
 
     isStalled(purchase) {
@@ -664,6 +712,42 @@ export default {
 
     archivePurchase(purchaseId) {
       this.$store.dispatch("purchases/archivePurchase", { purchaseId });
+    },
+
+    getSearchStatusesForGroup(groupName) {
+      return map(this.getStatusesForGroup(groupName), status => `^${status}`).join("|");
+    },
+
+    isStatusInGroup(status, groupName) {
+      return this.getStatusesForGroup(groupName).indexOf(status) >= 0;
+    },
+
+    getStatusesForGroup(groupName) {
+      if (groupName === "uploading") {
+        return ["initial"];
+      }
+      if (groupName === "production") {
+        return ["production", "redo"];
+      }
+      if (groupName === "authoring") {
+        return ["authoring", "authorQueued", "producerApproved"];
+      }
+      if (groupName === "fulfillment") {
+        return ["authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
+      }
+      if (groupName === "shipping") {
+        return ["shipping"];
+      }
+      if (groupName === "complete") {
+        return ["arrived", "complete"];
+      }
+      if (groupName === "archive") {
+        return ["archive"];
+      }
+      if (groupName === "all current") {
+        return ["initial", "readyForProduction", "inProduction", "producerApproved", "authoring", "authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
+      }
+      return [];
     },
   }
 };

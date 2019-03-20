@@ -8,8 +8,7 @@ import store from "./store";
 
 Vue.use(VueFire);
 Vue.use(Buefy, {
-  defaultIconPack: "fas",
-  defaultContainerElement: "#content"
+  defaultIconPack: "fas"
 });
 
 Vue.config.productionTip = false;
