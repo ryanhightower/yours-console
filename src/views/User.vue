@@ -146,6 +146,7 @@
 
     <h4 class="title is-4">Debug</h4>
     <pre>USER: {{ user }}</pre>
+    <pre>ADDRESSES: {{ addresses }}</pre>
     <pre>STRIPE_CUSTOMER: {{ stripeCustomer }}</pre>
     <pre>PURCHASES_BY_USER: {{ purchasesByUser }}</pre>
   </div>
@@ -167,6 +168,7 @@ export default {
       consoleUrl: state => state.consoleUrl,
       users: state => state.users.all,
       stripeCustomers: state => state.users.stripeCustomers,
+      userAddresses: state => state.users.userAddresses,
       loadingUsers: state =>
         state.users.loading.users || state.users.loading.stripeCustomers,
       refs: state => state.refs
@@ -179,6 +181,9 @@ export default {
     },
     stripeCustomer() {
       return this.stripeCustomers[this.userId] || null;
+    },
+    addresses() {
+      return this.userAddresses[this.userId] || null;
     },
     subscription() {
       return get(
@@ -240,6 +245,10 @@ export default {
           });
           this.$store.dispatch("users/setStripeCustomer", {
             ref: this.refs.STRIPE_CUSTOMERS.child(this.userId),
+            key: this.userId
+          });
+          this.$store.dispatch("users/setUserAddresses", {
+            ref: this.refs.ADDRESSES_BY_USER.child(this.userId),
             key: this.userId
           });
         }
