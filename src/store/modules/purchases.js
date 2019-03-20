@@ -80,18 +80,17 @@ export default {
     }
   },
   actions: {
-    setPurchaseStatus(
-      { commit, state, getters },
-      { purchaseId, status, user }
-    ) {
-      console.log({ status, purchaseId });
+    setPurchaseStatus({ commit, getters }, { purchaseId, status, user }) {
       if (!status || !purchaseId) return;
       user = user || auth.currentUser;
       const purchase = getters.purchaseById(purchaseId);
+
       const d = new Date();
-      const dateStr = `${d.getFullYear()}-${("0" + d.getMonth()).slice(-2)}-${(
-        "0" + d.getDate()
-      ).slice(-2)}`;
+      const year = d.getFullYear();
+      const month = ("0" + (d.getMonth()+1)).slice(-2); // Add +1 to month becuase it is zero indexed.
+      const day = ("0" + d.getDate()).slice(-2);
+      const dateStr = `${year}-${month}-${day}`;
+
       const newNote = `${
         purchase.notes ? purchase.notes + "\n" : ""
       }[${dateStr}](${user.displayName}) set status from ${
