@@ -53,8 +53,6 @@
           { label: `Authoring`, searchText: getSearchStatusesForGroup('authoring') },
           { label: `Fulfillment`, searchText: getSearchStatusesForGroup('fulfillment') },
           { label: `Shipping`, searchText: getSearchStatusesForGroup('shipping') },
-          { label: `Complete`, searchText: getSearchStatusesForGroup('complete') },
-          { label: `Archive`, searchText: getSearchStatusesForGroup('archive') },
           { label: `All Current`, searchText: getSearchStatusesForGroup('all current') },
         ]"
         :key="idx"
