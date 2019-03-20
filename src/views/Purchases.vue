@@ -665,9 +665,7 @@ export default {
     },
 
     setStatus({ purchaseId, status }) {
-
       this.$store.dispatch("purchases/setPurchaseStatus", { purchaseId, status });
-      // this.$store.commit("purchases/SET_PURCHASE_STATUS", { key, status });
     },
 
     setShipsWithAnotherPurchase({ purchaseId, otherPurchaseId }) {
@@ -747,7 +745,7 @@ export default {
         return ["archive"];
       }
       if (groupName === "all current") {
-        return ["initial", "readyForProduction", "inProduction", "producerApproved", "authoring", "submittedForBurn"];
+        return ["initial", "readyForProduction", "inProduction", "producerApproved", "authoring", "authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
       }
       return [];
     },
