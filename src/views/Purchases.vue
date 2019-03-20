@@ -329,22 +329,25 @@
       <!-- DETAILS -->
 
       <template slot="detail" slot-scope="props">
-
         <div class="details">
-          <div class="quick-actions">
+          <span v-if="consoleRole == 'admin'">
+            <div class="quick-actions">
+              <span>
+                <h6 class="title is-6">Quick Actions</h6>
+              </span>
 
-          <span>
-            <h6 class="title is-6">Quick Actions</h6>
-          </span>
-
-          <a v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6" class="button" @click="giveUpOnUploading(props.row)" >
+              <a
+                v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6"
+                class="button"
+                @click="giveUpOnUploading(props.row)"
+              >
                 <span>Fail Remaining Uploads</span>
                 <b-loading
                   :is-full-page="false"
                   :active.sync="loading.giveup"
                 ></b-loading>
               </a>
-              <a class="button" @click="sendToAuthor(props.row.key)" >
+              <a class="button" @click="sendToAuthor(props.row.key)">
                 <b-icon icon="robot"></b-icon>
                 <span>Send to Authoring</span>
                 <b-loading
@@ -363,58 +366,61 @@
                 :key="idx"
                 :class="[`button`, button.type]"
                 @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
-                >{{ button.label }}</a>
+                >{{ button.label }}
+              </a>
               <a
                 @click="archivePurchase(props.row[`.key`])"
                 class="button is-danger"
-                >!! Archive !!</a>
-          </div>
+                >!! Archive !!
+              </a>
+            </div>
 
 
-          <span>
-            <h6 class="title is-6">Status</h6>
-          </span>
-          <b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
-            <option
-              v-for="(option, idx) in statuses"
-              :value="option"
-              :key="idx">
-              {{ option }}
-            </option>
-          </b-select>
-          <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a><br>
+            <span>
+              <h6 class="title is-6">Status</h6>
+            </span>
+            <b-select placeholder="Select a status" :value="props.row.status" :ref="`${props.row['.key']}-status-select`">
+              <option
+                v-for="(option, idx) in statuses"
+                :value="option"
+                :key="idx">
+                {{ option }}
+              </option>
+            </b-select>
+            <a @click="setStatus({ purchaseId: props.row['.key'], status: $refs[`${props.row['.key']}-status-select`].$refs.select.value })" class="button is-primary">Save Status</a><br>
 
-          <h3 class="title is-6" v-if="props.row.trackingNumber">
-            Tracking Number<br>
-            <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
-          </h3>
+            <h3 class="title is-6" v-if="props.row.trackingNumber">
+              Tracking Number<br>
+              <a :href="`https://tools.usps.com/go/TrackConfirmAction?tLabels=${props.row.trackingNumber}`" target="_blank">{{props.row.trackingNumber}}</a>
+            </h3>
 
-          <div class="title is-6" v-if="props.row.shippedWithPurchaseId">
-            Is Shipping with Purchase<br>
-            <router-link
-              :to="{
-                name: `purchase`,
-                params: { purchaseId: props.row.shippedWithPurchaseId }
-              }"
-              >{{ props.row.shippedWithPurchaseId }}
-            </router-link>
-              &nbsp;&nbsp;
-            <a :href="`${consoleUrl}/purchase/${props.row.shippedWithPurchaseId}`" target="_blank">
-              <b-icon size="is-small" icon="external-link-alt"></b-icon>
+            <div class="title is-6" v-if="props.row.shippedWithPurchaseId">
+              Is Shipping with Purchase<br>
+              <router-link
+                :to="{
+                  name: `purchase`,
+                  params: { purchaseId: props.row.shippedWithPurchaseId }
+                }"
+                >{{ props.row.shippedWithPurchaseId }}
+              </router-link>
+                &nbsp;&nbsp;
+              <a :href="`${consoleUrl}/purchase/${props.row.shippedWithPurchaseId}`" target="_blank">
+                <b-icon size="is-small" icon="external-link-alt"></b-icon>
+              </a>
+            </div>
+
+            <b-field v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')" label="Ship With">
+              <b-input :ref="`${props.row['.key']}-ships-with-input`" placeholder="Enter Other Purchase Id"></b-input>
+            </b-field>
+            <a
+              v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')"
+              @click="setShipsWithAnotherPurchase({ purchaseId: props.row['.key'], otherPurchaseId: $refs[`${props.row['.key']}-ships-with-input`].$refs.input.value })"
+              class="button is-primary">
+              Set To Ship With Other Purchase
             </a>
-          </div>
-
-          <b-field v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')" label="Ship With">
-            <b-input :ref="`${props.row['.key']}-ships-with-input`" placeholder="Enter Other Purchase Id"></b-input>
-          </b-field>
-          <a
-            v-if="isStatusInGroup(props.row.status, 'fulfillment') || isStatusInGroup(props.row.status, 'shipping')"
-            @click="setShipsWithAnotherPurchase({ purchaseId: props.row['.key'], otherPurchaseId: $refs[`${props.row['.key']}-ships-with-input`].$refs.input.value })"
-            class="button is-primary">
-            Set To Ship With Other Purchase
-          </a>
-          <br>
-          <br>
+            <br>
+            <br>
+          </span>
 
           <b-field label="Title">
             <b-input v-model="props.row.dvd_cover_title"></b-input>
@@ -461,14 +467,15 @@ import { mapState, mapGetters } from "vuex";
 import api from "../services/api";
 import { auth } from "../firebase";
 import purchasesMixin from "@/mixins/purchasesMixin";
+import roleMixin from "@/mixins/roleMixin";
 
 export default {
   name: "Purchases",
   components: {
     Scanner: () => import("@/views/Scanner"),
   },
-  // NOTE: If you don't know where something is, check the purchasesMixin
-  mixins: [purchasesMixin],
+  // NOTE: If you don't know where something is, check the mixins
+  mixins: [purchasesMixin, roleMixin],
   data() {
     return {
       sortBy: "status",

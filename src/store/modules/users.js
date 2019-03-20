@@ -41,7 +41,11 @@ export default {
     },
     MAX_USERS_LENGTH: 10
   },
-  getters: {},
+  getters: {
+    userById: state => userId => {
+      return state.all[userId] || null;
+    }
+  },
   mutations: {
     TOGGLE_LOADING_STATE(state, { key, value }) {
       state.loading[key] = value;
