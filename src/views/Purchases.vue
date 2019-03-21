@@ -727,7 +727,7 @@ export default {
         return ["initial"];
       }
       if (groupName === "production") {
-        return ["production", "redo"];
+        return ["inProduction", "readyForProduction", "redo"];
       }
       if (groupName === "authoring") {
         return ["authoring", "authorQueued", "producerApproved"];
@@ -745,7 +745,7 @@ export default {
         return ["archive"];
       }
       if (groupName === "all current") {
-        return ["initial", "readyForProduction", "inProduction", "producerApproved", "authoring", "authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
+        return ["initial", "readyForProduction", "redo", "inProduction", "producerApproved", "authoring", "authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
       }
       return [];
     },
