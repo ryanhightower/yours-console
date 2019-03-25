@@ -336,44 +336,44 @@
             <span>
               <h6 class="title is-6">Quick Actions</h6>
             </span>
+            <div class="buttons">
+              <button
+                v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6"
+                class="button"
+                @click="giveUpOnUploading(props.row)"
+              >
+                <span>Fail Remaining Uploads</span>
+                <b-loading
+                  :is-full-page="false"
+                  :active.sync="loading.giveup"
+                ></b-loading>
+              </button>
 
-            <a
-              v-if="props.row.status === 'initial' && props.row.uploadedFileCount >= 6"
-              class="button"
-              @click="giveUpOnUploading(props.row)"
-            >
-              <span>Fail Remaining Uploads</span>
-              <b-loading
-                :is-full-page="false"
-                :active.sync="loading.giveup"
-              ></b-loading>
-            </a>
-            <a class="button" @click="sendToAuthor(props.row.key)">
-              <b-icon icon="robot"></b-icon>
-              <span>Send to Authoring</span>
-              <b-loading
-                :is-full-page="false"
-                :active.sync="loading.author"
-              ></b-loading>
-            </a>
-            <a
-              v-for="(button, idx) in [
-                { label: 'Redo', status: 'redo', type: 'is-primary' },
-                { label: 'Shipping', status: 'shipping', type: 'is-primary' },
-                { label: 'Arrived', status: 'arrived', type: 'is-success' },
-                { label: 'Complete', status: 'complete', type: 'is-success' },
-                { label: 'Testing', status: 'testing', type: 'is-warning' },
-              ]"
-              :key="idx"
-              :class="[`button`, button.type]"
-              @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
-              >{{ button.label }}
-            </a>
-            <a
-              @click="archivePurchase(props.row[`.key`])"
-              class="button is-danger"
-              >!! Archive !!
-            </a>
+              <button class="button" @click="sendToAuthor(props.row.key)" :disabled="props.row.discQuantity <= 0">
+                <b-icon icon="robot"></b-icon>
+                <span>Send to Authoring</span>
+                <b-loading
+                  :is-full-page="false"
+                  :active.sync="loading.author"
+                ></b-loading>
+              </button>
+              <button
+                v-for="(button, idx) in [
+                  { label: 'Redo', status: 'redo', type: 'is-primary' },
+                  { label: 'Arrived', status: 'arrived', type: 'is-success' },
+                  { label: 'Testing', status: 'testing', type: 'is-warning' },
+                ]"
+                :key="idx"
+                :class="[`button`, button.type]"
+                @click="setStatus({ purchaseId: props.row[`.key`], status: button.status })"
+                >{{ button.label }}
+              </button>
+              <button
+                @click="archivePurchase(props.row[`.key`])"
+                class="button is-danger"
+                >!! Archive !!
+              </button>
+            </div>
           </section>
 
           <section class="purchase-details content">
