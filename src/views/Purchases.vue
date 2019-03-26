@@ -695,8 +695,9 @@ export default {
         purchase.trackingNumber = otherPurchase.trackingNumber;
         purchase.labelId = otherPurchase.labelId;
         purchase.labelUrl = otherPurchase.labelUrl;
+        purchase.status = otherPurchase.status;
         purchase.shippedWithPurchaseId = otherPurchaseId;
-        this.savePurchase(purchase, ["trackingNumber", "labelId", "labelUrl", "shippedWithPurchaseId"]);
+        this.savePurchase(purchase, ["trackingNumber", "labelId", "labelUrl", "shippedWithPurchaseId", "status"]);
       } else {
         let message;
         if (purchase.trackingNumber) {
@@ -756,7 +757,7 @@ export default {
         return ["authored", "submittedForBurn", "burnComplete", "burnError", "burning", "copyingForBurn"];
       }
       if (groupName === "shipping") {
-        return ["shipping"];
+        return ["packaging", "packagingApproved", "shipping"];
       }
       if (groupName === "complete") {
         return ["arrived", "complete"];
